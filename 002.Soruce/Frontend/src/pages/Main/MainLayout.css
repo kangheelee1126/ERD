@@ -1,0 +1,193 @@
+/* =========================================
+   MainLayout.css - Final Complete Version
+   ========================================= */
+
+/* [필수] 모든 요소의 크기 계산을 '테두리 포함'으로 고정 */
+* {
+  box-sizing: border-box;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #0f172a; /* Slate-900 */
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* =========================================
+   1. 상단 헤더
+   ========================================= */
+.main-header {
+  height: 50px;
+  background-color: #1e293b; /* Slate-800 */
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+
+.header-left, .header-right { display: flex; align-items: center; gap: 15px; }
+.project-title { font-weight: 700; font-size: 1.1rem; }
+
+/* 헤더 버튼들 */
+.save-btn { background-color: #3b82f6; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+.save-btn:hover { background-color: #2563eb; }
+.icon-btn { cursor: pointer; color: #94a3b8; }
+.icon-btn:hover { color: #fff; }
+
+.header-btn { display: flex; align-items: center; gap: 6px; background-color: transparent; border: 1px solid #475569; color: #cbd5e1; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+.header-btn:hover { background-color: #334155; color: #fff; border-color: #64748b; }
+
+.divider-vertical { width: 1px; height: 24px; background-color: #334155; margin: 0 5px; }
+
+/* 토글 스위치 */
+.view-mode-control { display: flex; align-items: center; gap: 8px; }
+.toggle-label { font-size: 0.8rem; color: #94a3b8; }
+.switch { position: relative; display: inline-block; width: 36px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #3b82f6; }
+input:checked + .slider:before { transform: translateX(16px); }
+
+.main-body { display: flex; flex: 1; overflow: hidden; }
+
+/* =========================================
+   2. 좌측 사이드바 (도구 & 메뉴)
+   ========================================= */
+.sidebar-left { width: 250px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; }
+.sidebar-section { padding: 15px; }
+.section-title { font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; }
+
+.toolbar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tool-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #334155; border: 1px solid #475569; border-radius: 8px; color: #cbd5e1; padding: 12px 0; cursor: pointer; transition: all 0.2s ease; }
+.tool-label { font-size: 0.7rem; margin-top: 6px; }
+.tool-btn:hover { background-color: #475569; color: #fff; }
+.tool-btn.active { background-color: rgba(59, 130, 246, 0.2); border-color: #3b82f6; color: #60a5fa; box-shadow: 0 0 8px rgba(59, 130, 246, 0.3); }
+
+.sidebar-divider { height: 1px; background-color: #334155; margin: 10px 20px; }
+.sidebar-item { padding: 15px 20px; cursor: pointer; color: #94a3b8; border-left: 3px solid transparent; }
+.sidebar-item:hover, .sidebar-item.active { background-color: #334155; color: #fff; border-left-color: #3b82f6; }
+
+/* =========================================
+   3. 캔버스 영역
+   ========================================= */
+.canvas-area { flex: 1; background-color: #0f172a; position: relative; }
+
+/* =========================================
+   4. 우측 속성 패널 (핵심 수정 부분)
+   ========================================= */
+.sidebar-right {
+  width: 460px; /* 넉넉한 너비 */
+  background-color: #1e293b;
+  border-left: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header { padding: 15px; font-weight: bold; border-bottom: 1px solid #334155; background-color: #1a2436; }
+.panel-content { padding: 15px; color: #94a3b8; flex: 1; overflow-y: auto; }
+.empty-msg { text-align: center; margin-top: 40px; color: #64748b; }
+.property-group { display: flex; flex-direction: column; gap: 10px; }
+.prop-label { font-size: 0.8rem; color: #94a3b8; font-weight: 600; margin-bottom: 4px; }
+.prop-divider { height: 1px; background: #334155; margin: 15px 0; }
+.columns-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+
+/* --- [중요] 모든 입력창 스타일 통일 --- */
+.ui-input {
+  background-color: #0f172a !important; /* 배경색 강제 적용 (흰색 방지) */
+  border: 1px solid #475569;
+  color: white !important;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  outline: none;
+  width: 100%;
+  
+  /* ✨ 높이 강제 고정 (32px) ✨ */
+  height: 32px;
+  line-height: 30px; 
+}
+.ui-input:focus { border-color: #3b82f6; }
+.ui-input.full-width { margin-bottom: 5px; width: 100%; }
+
+.add-col-btn { background-color: #3b82f6; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
+.column-list { display: flex; flex-direction: column; gap: 6px; }
+
+/* --- [중요] 컬럼 리스트 아이템 (Flexbox) --- */
+.column-item {
+  display: flex; /* Flexbox로 가로 배치 */
+  align-items: center; /* 수직 중앙 정렬 (높이 맞춤) */
+  gap: 6px;
+  background: #334155;
+  padding: 6px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+/* 1. 체크박스 */
+.column-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 2. 이름 입력창 (가변 너비) */
+.column-item .ui-input {
+  flex: 1;      /* 남은 공간 채우기 */
+  width: 0;     /* 내용물 넘침 방지 */
+  min-width: 0; 
+}
+
+/* 3. 타입 입력창 (90px로 확장) */
+.column-item .ui-input.short {
+  flex: 0 0 90px; /* 👈 너비 90px 고정 */
+  width: 90px;
+  min-width: 90px;
+  text-align: center;
+  padding: 0 4px;
+}
+
+/* 4. 삭제 버튼 */
+.del-col-btn {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.del-col-btn:hover { color: #ef4444; }
+
+/* --- 기타 스타일 --- */
+.delete-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background-color: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 10px; transition: all 0.2s; }
+.delete-btn:hover { background-color: #ef4444; color: white; }
+.radio-group { display: flex; flex-direction: column; gap: 8px; background: #0f172a; padding: 10px; border-radius: 4px; }
+.cardinality-controls { display: flex; flex-direction: column; gap: 8px; }
+.control-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+.ui-select { background: #0f172a; border: 1px solid #475569; color: white; padding: 4px; border-radius: 4px; outline: none; }
+
+/* 뷰 모드 셀렉터 스타일 */
+.view-select {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.view-select:hover {
+  border-color: #64748b;
+}
+
+.view-select:focus {
+  border-color: #3b82f6;
+}

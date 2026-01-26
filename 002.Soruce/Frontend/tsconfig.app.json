@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    /* 삭제함: "tsBuildInfoFile": ... (incremental 옵션 없으면 에러남) */
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "types": ["vite/client"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+    /* 삭제함: "erasableSyntaxOnly": true (최신 TS 전용이라 에러 가능성 높음) */
+    /* 삭제함: "noUncheckedSideEffectImports": true (최신 TS 전용이라 에러 가능성 높음) */
+  },
+  "include": ["src"]
+}
