@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Plus, Save, Trash2, 
   ChevronRight, ChevronDown, List, Layers,
-  HelpCircle, LayoutDashboard, Settings, Database, Users, 
-  ShieldCheck, UserCircle, PenTool, Share2, Box, AppWindow,
-  Bell, Calendar, Search, Mail
+  HelpCircle
 } from 'lucide-react';
 import * as Icons from 'lucide-react'; 
 import { MenuService } from '../../services/menuService'; 
