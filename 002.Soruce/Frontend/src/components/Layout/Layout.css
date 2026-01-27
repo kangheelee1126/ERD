@@ -1,0 +1,46 @@
+/* 전체 레이아웃 */
+.layout-container { display: flex; flex-direction: column; height: 100vh; background-color: #0f172a; }
+.main-body { display: flex; flex: 1; overflow: hidden; }
+
+/* 🌟 상단 헤더 스타일 */
+.main-header {
+  height: 56px;
+  background-color: #1e293b;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 100;
+}
+.header-left, .header-right { display: flex; align-items: center; gap: 15px; }
+.project-title { font-weight: 700; color: #f8fafc; font-size: 1.1rem; }
+.logo-placeholder { background: #3b82f6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 800; }
+.user-profile { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #cbd5e1; }
+.divider-vertical { width: 1px; height: 20px; background-color: #334155; }
+.icon-btn { color: #94a3b8; cursor: pointer; transition: color 0.2s; }
+.icon-btn:hover { color: #fff; }
+
+/* 🌟 사이드바 및 Accordion 스타일 */
+.sidebar-left { background-color: #1e293b; border-right: 1px solid #334155; width: 260px; }
+.section-title { font-size: 0.85rem; color: #64748b; padding: 20px 20px 8px 20px; text-transform: uppercase; font-weight: 700; }
+
+/* 부모 메뉴 활성화 시 볼드 + 화살표 */
+.menu-group-container.has-active .section-title { color: #ffffff; font-weight: 800; }
+.menu-group-container.has-active .section-title::before {
+  content: '▶'; font-size: 0.65rem; margin-right: 10px; color: #3b82f6;
+}
+
+/* 자식 메뉴 및 단일 선택 강조 */
+.sidebar-item {
+  display: flex; align-items: center; padding: 10px 16px 10px 35px;
+  margin: 2px 12px; border-radius: 4px; color: #94a3b8; text-decoration: none; font-size: 0.9rem;
+}
+.sidebar-item.active {
+  background-color: #3b82f6 !important; color: #ffffff !important; font-weight: 600;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+.icon-wrapper { margin-right: 12px; opacity: 0.6; }
+.sidebar-item.active .icon-wrapper { opacity: 1; color: #fff; }
+
+.content-area { flex: 1; overflow-y: auto; background-color: #0f172a; }

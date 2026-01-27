@@ -1,42 +1,76 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 👈 추가 1
+import { useNavigate, Link } from 'react-router-dom';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
-import logoImg from '../../assets/logo.png'; // 저장한 승예 캐릭터 로고 불러오기
-import './LoginPage.css'; // 스타일 파일 불러오기
-import { Link } from 'react-router-dom';
+
+// ✨ [중요] 아까 만든 공통 API 모듈을 여기서 불러와야 합니다!
+import api from '../../api/http'; 
+
+import logoImg from '../../assets/logo.png';
+import './LoginPage.css';
 
 const LoginPage = () => {
-  const navigate = useNavigate(); // 👈 추가 2
-  // 상태 관리 (아이디, 비밀번호, 비밀번호 보이기 여부)
+  const navigate = useNavigate();
+  
+  // 상태 관리
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   // 로그인 버튼 클릭 시 실행될 함수
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault(); // 페이지 새로고침 방지
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    // TODO: 나중에 여기에 백엔드 API 연동 코드를 넣을 예정입니다.
-    console.log('로그인 시도:', { id, password });
-    
-    if (id && password) {
-      alert(`${id}님, 환영합니다! (로그인 테스트 성공)`);
-      navigate('/main'); // 👈 메인 화면으로 납치!
-    } else {
+    // 유효성 검사
+    if (!id || !password) {
       alert('아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    try {
+      // ✅ api.post 사용
+      // http.ts에 설정된 baseURL 덕분에 뒷부분 주소만 적으면 됩니다.
+      const response = await api.post('/auth/login', {
+        userId: id,
+        password: password
+      });
+
+      // 2. 성공 시 (HTTP 200)
+      if (response.status === 200) {
+        const { userName } = response.data;
+        
+        alert(`${userName}님, 환영합니다!`);
+        console.log('로그인 성공 데이터:', response.data);
+        
+        // 메인 화면으로 이동
+        navigate('/main'); 
+      }
+
+    } catch (error: any) {
+      // 3. 실패 시 에러 처리
+      console.error("로그인 에러:", error);
+
+      if (error.response) {
+        // 서버가 응답을 줬지만 실패한 경우 (예: 401 Unauthorized)
+        if (error.response.status === 401) {
+          alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+        } else {
+          alert(`오류 발생: ${error.response.data.message || "알 수 없는 오류"}`);
+        }
+      } else {
+        // 서버 연결 실패
+        alert("서버에 연결할 수 없습니다. (백엔드 실행 여부와 포트를 확인하세요)");
+      }
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-card">
-        {/* 헤더 영역: 로고와 타이틀 */}
+        {/* 헤더 영역 */}
         <div className="login-header">
-          {/* 승예 캐릭터 로고 이미지 */}
           <img src={logoImg} alt="Seungye Logo" className="login-logo" />
-          
           <h1 className="brand-title">
-            ERD <span className="brand-highlight">Sytem</span>
+            ERD <span className="brand-highlight">System</span>
           </h1>
           <p className="welcome-text">환영합니다!</p>
         </div>
@@ -52,7 +86,7 @@ const LoginPage = () => {
               value={id}
               onChange={(e) => setId(e.target.value)}
               className="login-input"
-              required // 필수 입력 설정
+              required 
             />
           </div>
 
@@ -65,14 +99,13 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="login-input"
-              required // 필수 입력 설정
+              required 
             />
-            {/* 눈 모양 아이콘 (비밀번호 보이기/숨기기) */}
             <button 
               type="button" 
               className="toggle-pw"
               onClick={() => setShowPassword(!showPassword)}
-              tabIndex={-1} // 탭 키로 포커스 가지 않도록 설정
+              tabIndex={-1}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>

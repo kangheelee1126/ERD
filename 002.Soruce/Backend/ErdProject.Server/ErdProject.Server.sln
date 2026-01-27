@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.36631.11
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErdProject.Server", "ErdProject.Server\ErdProject.Server.csproj", "{336CFA7B-6779-4C35-8FCA-00DDBC510358}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{336CFA7B-6779-4C35-8FCA-00DDBC510358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{336CFA7B-6779-4C35-8FCA-00DDBC510358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{336CFA7B-6779-4C35-8FCA-00DDBC510358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{336CFA7B-6779-4C35-8FCA-00DDBC510358}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B1B536B-78FF-4C82-A15E-45FC22702F6D}
+	EndGlobalSection
+EndGlobal

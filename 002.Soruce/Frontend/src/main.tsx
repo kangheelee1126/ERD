@@ -1,10 +1,15 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-//import './index.css' <-- 이 줄이 있다면 지우거나 주석 처리해주세요! (우리가 만든 css와 충돌할 수 있음)
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
+import './index.css'
+// 👇 1. 이 줄을 추가하세요!
+import { BrowserRouter } from 'react-router-dom' 
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    {/* 👇 2. BrowserRouter로 App을 감싸주세요! */}
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>,
 )
