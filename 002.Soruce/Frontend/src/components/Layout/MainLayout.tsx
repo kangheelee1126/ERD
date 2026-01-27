@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { LayoutGrid, Users, Settings, List, Database, Bell, User } from 'lucide-react';
+import Sidebar from './Sidebar'; // 작성하신 Sidebar 컴포넌트 임포트
 import './Layout.css';
 
 const MainLayout = () => {
@@ -44,33 +45,7 @@ const MainLayout = () => {
       
       <div className="main-body">
         {/* 사이드바 영역 */}
-        <aside className="sidebar-left open">
-          <div className="sidebar-menu">
-            {menuGroups.map((group, idx) => {
-              const isGroupActive = group.items.some(item => location.pathname === item.path);
-              return (
-                <div key={idx} className={`menu-group-container ${isGroupActive ? 'has-active' : ''}`}>
-                  <div className="section-title">
-                    <span className="menu-text">{group.title}</span>
-                  </div>
-                  <div className="group-items">
-                    {group.items.map((item, i) => (
-                      <NavLink 
-                        key={i} 
-                        to={item.path} 
-                        className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
-                      >
-                        <div className="icon-wrapper"><item.icon size={16} /></div>
-                        <span className="menu-text">{item.name}</span>
-                      </NavLink>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </aside>
-        
+        <Sidebar />
         {/* 콘텐츠 영역 */}
         <main className="content-area">
           <Outlet />

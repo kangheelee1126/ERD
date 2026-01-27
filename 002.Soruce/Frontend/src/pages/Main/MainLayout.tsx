@@ -20,7 +20,7 @@ const MainLayout = () => {
           </button>
           <div className="divider-vertical"></div>
           <div className="user-profile">Admin</div>
-          <span title="로그아웃">
+          <span title="로그아웃2">
             <LogOut className="icon-btn" onClick={() => navigate('/')} />
           </span>
         </div>

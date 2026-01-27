@@ -49,3 +49,35 @@
   }
   
   .menu-inner-content { display: flex; align-items: center; gap: 12px; }
+
+  /* 상단 브랜드 로고 영역 */
+.sidebar-brand {
+  height: 64px; /* 메인 헤더와 높이를 맞춤 */
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #334155; /* 하단 구분선 */
+  background-color: #1e293b;
+  flex-shrink: 0; /* 스크롤 시에도 높이 유지 */
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-name {
+  color: #f8fafc;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* 호버 시 살짝 밝아지는 효과 (선택사항) */
+.sidebar-brand:hover {
+  background-color: #243146;
+}
