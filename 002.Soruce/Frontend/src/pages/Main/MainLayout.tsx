@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Menu, LogOut, MousePointer2, PlusSquare, Link, Trash2, Upload } from 'lucide-react';
+/* ✨ 1. [수정] 아이콘 추가: ArrowUp, ArrowDown */
+import { Menu, LogOut, MousePointer2, PlusSquare, Link, Trash2, Upload, ArrowUp, ArrowDown } from 'lucide-react';
 import { 
   useNodesState, 
   useEdgesState, 
@@ -11,19 +12,17 @@ import {
 import ErdCanvas from './ErdCanvas';
 import './MainLayout.css';
 
-// 뷰 모드 타입 정의
 type ViewMode = 'logical' | 'physical' | 'both';
 
-// 초기 데이터
 const initialNodes: Node[] = [
   { 
     id: 'table-1', 
     type: 'table', 
     position: { x: 100, y: 100 }, 
     data: { 
-      label: 'Users',          // 물리명
-      logicalLabel: '사용자',   // 논리명
-      viewMode: 'both',        // 초기 모드
+      label: 'Users', 
+      logicalLabel: '사용자', 
+      viewMode: 'both',
       columns: [
         { name: 'user_id', logicalName: '아이디', type: 'INT', isPk: true },
         { name: 'username', logicalName: '이름', type: 'VARCHAR(50)' },
@@ -36,10 +35,7 @@ const MainLayout = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [activeTool, setActiveTool] = useState('select');
-  
-  // ✨ 3단 뷰 모드 상태 관리
   const [viewMode, setViewMode] = useState<ViewMode>('both');
-  
   const [selectedTarget, setSelectedTarget] = useState<{ type: 'node' | 'edge', data: any } | null>(null);
 
   const defaultEdgeOptions = {
@@ -54,7 +50,6 @@ const MainLayout = () => {
     [setEdges]
   );
 
-  // ✨ 뷰 모드 변경 핸들러
   const handleViewModeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const mode = e.target.value as ViewMode;
     setViewMode(mode);
@@ -82,7 +77,7 @@ const MainLayout = () => {
       data: { 
         label: 'New Table', 
         logicalLabel: '새 테이블',
-        viewMode: viewMode, // 현재 뷰 모드 적용
+        viewMode: viewMode,
         columns: [{ name: 'id', logicalName: '아이디', type: 'INT', isPk: true }] 
       },
     };
@@ -103,7 +98,6 @@ const MainLayout = () => {
     setSelectedTarget(null);
   };
 
-  // ✨ 테이블 이름 수정 (물리/논리 분리)
   const updateTableName = (field: 'label' | 'logicalLabel', value: string) => {
     if (selectedTarget?.type !== 'node') return;
     setNodes((nds) => nds.map((n) => 
@@ -129,6 +123,29 @@ const MainLayout = () => {
       if (n.id === selectedTarget.data.id) {
         const newCols = [...n.data.columns];
         newCols[idx] = { ...newCols[idx], [field]: value };
+        return { ...n, data: { ...n.data, columns: newCols } };
+      }
+      return n;
+    }));
+  };
+
+  /* ✨ 2. [추가] 컬럼 순서 변경 함수 (위/아래 이동) */
+  const moveColumn = (index: number, direction: 'up' | 'down') => {
+    if (selectedTarget?.type !== 'node') return;
+    
+    setNodes((nds) => nds.map((n) => {
+      if (n.id === selectedTarget.data.id) {
+        const newCols = [...n.data.columns];
+        
+        // 위로 이동 (현재가 0보다 커야 함)
+        if (direction === 'up' && index > 0) {
+          [newCols[index], newCols[index - 1]] = [newCols[index - 1], newCols[index]];
+        }
+        // 아래로 이동 (현재가 마지막이 아니어야 함)
+        else if (direction === 'down' && index < newCols.length - 1) {
+          [newCols[index], newCols[index + 1]] = [newCols[index + 1], newCols[index]];
+        }
+        
         return { ...n, data: { ...n.data, columns: newCols } };
       }
       return n;
@@ -178,8 +195,6 @@ const MainLayout = () => {
             <Upload size={16} />
             <span>SQL Export</span>
           </button>
-          
-          {/* ✨ 3단 뷰 모드 셀렉터 */}
           <div className="view-mode-control">
             <span className="toggle-label">View Mode:</span>
             <select className="ui-select view-select" value={viewMode} onChange={handleViewModeChange}>
@@ -188,7 +203,6 @@ const MainLayout = () => {
               <option value="both">논리/물리 (Both)</option>
             </select>
           </div>
-          
           <div className="divider-vertical"></div>
           <button className="save-btn">저장</button>
           <div className="user-profile">Admin</div>
@@ -239,7 +253,6 @@ const MainLayout = () => {
 
             {selectedTarget?.type === 'node' && currentNode && (
               <div className="property-group">
-                {/* ✨ 테이블 이름 입력창 2개로 분리 */}
                 <label className="prop-label">물리 테이블명 (Physical)</label>
                 <input 
                   className="ui-input full-width" 
@@ -247,7 +260,6 @@ const MainLayout = () => {
                   onChange={(e) => updateTableName('label', e.target.value)} 
                   placeholder="ENG (ex: USERS)"
                 />
-                
                 <label className="prop-label" style={{marginTop: '5px'}}>논리 테이블명 (Logical)</label>
                 <input 
                   className="ui-input full-width" 
@@ -255,7 +267,6 @@ const MainLayout = () => {
                   onChange={(e) => updateTableName('logicalLabel', e.target.value)} 
                   placeholder="한글 (ex: 사용자)"
                 />
-                
                 <div className="prop-divider"></div>
 
                 <div className="columns-header">
@@ -265,6 +276,17 @@ const MainLayout = () => {
                 <div className="column-list">
                   {currentNode.data.columns.map((col: any, idx: number) => (
                     <div key={idx} className="column-item">
+                      {/* 1. 이동 버튼 영역 */}
+                      <div className="col-move-btns">
+                        <button className="move-btn" onClick={() => moveColumn(idx, 'up')} disabled={idx === 0}>
+                           <ArrowUp size={12} />
+                        </button>
+                        <button className="move-btn" onClick={() => moveColumn(idx, 'down')} disabled={idx === currentNode.data.columns.length - 1}>
+                           <ArrowDown size={12} />
+                        </button>
+                      </div>
+
+                      {/* 2. 기존 입력 필드들 */}
                       <input type="checkbox" checked={col.isPk} onChange={(e) => updateColumn(idx, 'isPk', e.target.checked)} />
                       <input className="ui-input" value={col.name} onChange={(e) => updateColumn(idx, 'name', e.target.value)} placeholder="ENG" />
                       <input className="ui-input" value={col.logicalName || ''} onChange={(e) => updateColumn(idx, 'logicalName', e.target.value)} placeholder="한글" />

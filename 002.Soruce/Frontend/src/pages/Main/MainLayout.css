@@ -191,3 +191,40 @@ input:checked + .slider:before { transform: translateX(16px); }
 .view-select:focus {
   border-color: #3b82f6;
 }
+
+/* ... 기존 코드 아래에 추가 ... */
+
+/* 컬럼 이동 버튼 영역 */
+.col-move-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-right: 4px;
+}
+
+/* 위/아래 이동 버튼 스타일 */
+.move-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+
+.move-btn:hover {
+  background-color: #334155;
+  color: #fff;
+}
+
+.move-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.move-btn:disabled:hover {
+  background-color: transparent;
+}

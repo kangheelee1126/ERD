@@ -150,3 +150,24 @@
   .link-highlight:hover {
     text-decoration: underline;
   }
+
+  /* ============================================================
+   ✨ 브라우저 자동 완성(Autofill) 스타일 강제 덮어쓰기
+   (이메일, 비밀번호 자동 입력 시 배경이 하얗게 되는 현상 제거)
+   ============================================================ */
+
+/* 1. 배경색을 다크 모드 색상(#334155)으로 덮어씌움 (내부 그림자 이용) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #334155 inset !important; /* 입력창 배경색과 맞춰주세요 */
+  -webkit-text-fill-color: #ffffff !important; /* 글자색을 흰색으로 고정 */
+  transition: background-color 5000s ease-in-out 0s; /* 배경색 변경 애니메이션 제거 */
+}
+
+/* 2. 자동 완성 시 폰트 크기나 스타일이 깨지는 것 방지 */
+input:-webkit-autofill::first-line {
+  font-family: -apple-system, sans-serif !important;
+  font-size: 0.95rem !important;
+}
