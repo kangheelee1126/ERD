@@ -11,37 +11,40 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // ✨ 세션 또는 로컬스토리지에서 userNo를 가져옵니다. [cite: 2026-01-27]
+  const userNo = Number(localStorage.getItem('userNo')) || 0; 
+
   useEffect(() => {
-    console.log("사이드바 useEffect 실행됨"); // 1. useEffect 진입 확인
-  
-    const loadMenus = async () => {
+    const loadAuthorizedMenus = async () => {
       try {
-        console.log("MenuService.getMenus() 호출 시작"); // 2. 서비스 호출 직전
-        const data = await MenuService.getMenus();
-        console.log("API 응답 데이터:", data); // 3. 데이터 수신 확인
         
-        // 평면 리스트를 트리 구조로 변환하는 안전장치 추가
-        const buildTree = (items: any[], parentId: string | null = null): any[] => {
+        if (!userNo) return;
+
+        // ✨ 1. 전체 메뉴가 아닌 인가된 메뉴만 서버에 요청 [cite: 2026-01-28]
+        const data = await MenuService.getAuthorizedMenus(userNo);
+        
+        // ✨ 2. 평면 리스트를 트리 구조로 변환하는 안전장치 (UpMenuId & SortNo 반영)
+        const buildTree = (items: any[], upMenuId: string | null = null): any[] => {
           return items
-            .filter(item => item.parentId === parentId)
+            .filter(item => item.upMenuId === upMenuId)
             .map(item => ({
               ...item,
               children: buildTree(items, item.menuId)
             }))
-            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+            .sort((a, b) => (a.sortNo || 0) - (b.sortNo || 0));
         };
   
-        // 데이터가 이미 트리 형태면 그대로, 아니면 변환
+        // 데이터가 이미 Children 리스트를 포함한 트리 형태면 그대로, 아니면 변환
         const menuTree = (data.length > 0 && data[0].children) ? data : buildTree(data);
         setMenus(menuTree);
         
       } catch (error) {
-        console.error("사이드바 API 호출 중 에러 발생:", error); // 4. 에러 로그
+        console.error("인가된 사이드바 메뉴 로드 실패:", error);
       }
     };
   
-    loadMenus();
-  }, []); // 의존성 배열이 빈 배열[]인지 꼭 확인하세요.
+    loadAuthorizedMenus();
+  }, [userNo]); 
 
   const toggleMenu = (menuId: string) => {
     setOpenMenus(prev => 
@@ -56,7 +59,7 @@ const Sidebar = () => {
       const isOpen = openMenus.includes(item.menuId);
       const isActive = location.pathname === item.menuUrl;
 
-      // 아이콘 컴포넌트 동적 할당 (React 임포트 에러 방지)
+      // Lucide 아이콘 동적 할당 [cite: 2026-01-28]
       const IconComponent = (Icons as any)[item.menuIcon] || Circle;
 
       return (
@@ -81,7 +84,7 @@ const Sidebar = () => {
             )}
           </div>
           
-          {/* 하위 메뉴 수직 배치 */}
+          {/* 하위 메뉴 렌더링: Children 리스트 기반 */}
           {hasChildren && isOpen && (
             <div className="sub-menu-container">
               {renderMenuItems(item.children, depth + 1)}
@@ -94,6 +97,7 @@ const Sidebar = () => {
 
   return (
     <aside className="app-sidebar-container">
+      {/* 상단 레이아웃 가이드 준수 [cite: 2026-01-28] */}
       <div className="sidebar-brand" onClick={() => navigate('/main')}>
         <Database className="brand-icon" size={24} color="#3b82f6" />
         <span className="brand-name">ERD TOOL</span>

@@ -36,7 +36,11 @@ const LoginPage = () => {
 
       // 2. 성공 시 (HTTP 200)
       if (response.status === 200) {
-        const { userName } = response.data;
+        const { userName , userNo } = response.data;
+        
+        // ✨ [핵심 수정] localStorage에 사용자 정보를 저장하여 사이드바와 공유합니다. [cite: 2026-01-27]
+        localStorage.setItem('userNo', userNo.toString());
+        localStorage.setItem('userName', userName);
         
         alert(`${userName}님, 환영합니다!`);
         console.log('로그인 성공 데이터:', response.data);

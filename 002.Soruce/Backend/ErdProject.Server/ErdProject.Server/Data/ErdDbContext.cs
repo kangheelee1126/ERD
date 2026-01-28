@@ -28,6 +28,10 @@ namespace ErdProject.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // 1. UserRole 복합 키 설정 (UserNo + RoleId) [cite: 2026-01-28]
+            modelBuilder.Entity<UserRole>()
+                .HasKey(ur => new { ur.UserNo, ur.RoleId });
+
             // ✨ RoleMenu는 복합키이므로 프로그램 구동을 위해 이 설정이 반드시 필요합니다.
             modelBuilder.Entity<RoleMenu>().HasKey(rm => new { rm.RoleId, rm.MenuId });
         }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Users, Plus, Save, X, Trash2, Edit } from 'lucide-react';
+import { Users, Plus, Save, X, Trash2, Edit, ShieldCheck } from 'lucide-react';
 import { UserService } from '../../services/UserService';
 import { RoleService } from '../../services/RoleService';
 import { UserRoleService } from '../../services/UserRoleService';
@@ -7,12 +7,13 @@ import './UserManagement.css';
 
 const UserManagement = () => {
     const [users, setUsers] = useState<any[]>([]);
-    const [allRoles, setAllRoles] = useState<any[]>([]); // 전체 권한 목록
+    const [allRoles, setAllRoles] = useState<any[]>([]);
     const [showModal, setShowModal] = useState(false);
+    const [showRoleModal, setShowRoleModal] = useState(false);
+    const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
     const [user, setUser] = useState<any>({ 
         userNo: 0, userId: '', userName: '', password: '', email: '', useYn: 'Y', regDt: '' 
     });
-    const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]); // 선택된 권한 IDs
 
     const loadData = async () => {
         try {
@@ -29,45 +30,50 @@ const UserManagement = () => {
 
     useEffect(() => { loadData(); }, []);
 
-    const openModal = async (targetUser: any = null) => {
+    // ✨ 신규/수정 기본 정보 모달 열기 [cite: 2026-01-28]
+    const openModal = (targetUser: any = null) => {
         if (targetUser) {
             setUser({ ...targetUser, password: '' });
-            // ✨ 사용자의 기존 권한 로드 [cite: 2026-01-28]
-            const roleIds = await UserRoleService.getUserRoles(targetUser.userNo);
-            setSelectedRoleIds(roleIds);
         } else {
             setUser({ userNo: 0, userId: '', userName: '', password: '', email: '', useYn: 'Y', regDt: '' });
-            setSelectedRoleIds([]);
         }
         setShowModal(true);
     };
 
-    const handleRoleToggle = (roleId: string) => {
-        setSelectedRoleIds(prev => 
-            prev.includes(roleId) ? prev.filter(id => id !== roleId) : [...prev, roleId]
-        );
+    // ✨ 권한 설정 전용 모달 (API 실패 시에도 실행 보장) [cite: 2026-01-28]
+    const openRoleModal = async (targetUser: any) => {
+        setUser(targetUser);
+        try {
+            const roleIds = await UserRoleService.getUserRoles(targetUser.userNo);
+            setSelectedRoleIds(Array.isArray(roleIds) ? roleIds : []);
+        } catch (error) {
+            // ✨ 에러 발생 시에도 빈 목록으로 팝업 진입 허용 [cite: 2026-01-28]
+            console.warn("권한 로드 실패 - 신규 설정 모드로 전환");
+            setSelectedRoleIds([]);
+        } finally {
+            setShowRoleModal(true);
+        }
     };
 
     const handleSave = async () => {
-        // ✨ 필수값 체크 [cite: 2026-01-28]
-        if (!user.userId || !user.userName) return alert('ID와 이름은 필수 입력 항목입니다.');
-
+        if (!user.userId || !user.userName) return alert('ID와 이름은 필수입니다.');
         try {
-            // 1. 사용자 정보 저장
-            const savedUser = await UserService.saveUser(user);
-            const userNo = user.userNo || savedUser.userNo;
-
-            // 2. 권한 매핑 정보 저장 [cite: 2026-01-28]
-            await UserRoleService.saveUserRoles({
-                userNo: userNo,
-                roleIds: selectedRoleIds
-            });
-
+            await UserService.saveUser(user);
             alert('성공적으로 저장되었습니다.');
             setShowModal(false);
             loadData();
         } catch (error) {
-            alert("저장 처리 중 오류가 발생했습니다.");
+            alert("저장 중 오류가 발생했습니다.");
+        }
+    };
+
+    const handleSaveRoles = async () => {
+        try {
+            await UserRoleService.saveUserRoles({ userNo: user.userNo, roleIds: selectedRoleIds });
+            alert('권한 설정이 저장되었습니다.');
+            setShowRoleModal(false);
+        } catch (error) {
+            alert("권한 저장 중 오류가 발생했습니다.");
         }
     };
 
@@ -79,14 +85,11 @@ const UserManagement = () => {
 
     const formatDate = (dateString: string) => {
         if (!dateString) return '-';
-        return new Date(dateString).toLocaleDateString('ko-KR', {
-            year: 'numeric', month: '2-digit', day: '2-digit'
-        });
+        return new Date(dateString).toLocaleDateString('ko-KR');
     };
 
     return (
         <div className="page-container">
-            {/* 상단 레이아웃 가이드 준수 [cite: 2026-01-28] */}
             <header className="page-header">
                 <div className="page-title"><Users size={28} /> 사용자 관리</div>
                 <button className="btn-primary" onClick={() => openModal()}><Plus size={16} /> 신규 등록</button>
@@ -95,23 +98,24 @@ const UserManagement = () => {
             <div className="table-container">
                 <table className="standard-table">
                     <thead>
+                        {/* 헤더 중앙 정렬 및 실선 가이드 [cite: 2026-01-28] */}
                         <tr>
                             <th className="text-center" style={{ width: '60px' }}>No</th>
                             <th className="text-center">아이디</th>
                             <th className="text-center">이름</th>
                             <th className="text-center">이메일</th>
                             <th className="text-center" style={{ width: '100px' }}>사용여부</th>
-                            <th className="text-center" style={{ width: '150px' }}>등록일</th>
-                            <th className="text-center col-manage">관리</th>
+                            <th className="text-center" style={{ width: '120px' }}>등록일</th>
+                            <th className="text-center col-manage" style={{ width: '250px' }}>관리</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((u, idx) => (
                             <tr key={u.userNo}>
                                 <td className="text-center">{idx + 1}</td>
-                                <td className="highlight-text">{u.userId}</td>
+                                <td className="text-center highlight-id">{u.userId}</td>
                                 <td>{u.userName}</td>
-                                <td>{u.email}</td>
+                                <td>{u.email || '-'}</td>
                                 <td className="text-center">
                                     <span className={u.useYn === 'Y' ? 'status-blue' : 'status-red'}>
                                         {u.useYn === 'Y' ? '사용' : '미사용'}
@@ -120,6 +124,7 @@ const UserManagement = () => {
                                 <td className="text-center">{formatDate(u.regDt)}</td>
                                 <td className="text-center">
                                     <div className="btn-table-group">
+                                        <button className="btn-table-edit" onClick={() => openRoleModal(u)}><ShieldCheck size={14} /> 권한설정</button>
                                         <button className="btn-table-edit" onClick={() => openModal(u)}><Edit size={14} /> 수정</button>
                                         <button className="btn-table-delete" onClick={() => handleDelete(u.userNo)}><Trash2 size={14} /> 삭제</button>
                                     </div>
@@ -130,55 +135,30 @@ const UserManagement = () => {
                 </table>
             </div>
 
+            {/* 사용자 정보 모달 (라벨-입력 테이블 구조) [cite: 2026-01-28] */}
             {showModal && (
                 <div className="modal-overlay">
-                    <div className="modal-content" style={{ width: '500px' }}>
-                        <div className="modal-header">
-                            <h3>사용자 정보 {user.userNo === 0 ? '등록' : '수정'}</h3>
-                        </div>
+                    <div className="modal-content" style={{ width: '520px' }}>
+                        <div className="modal-header"><h3>사용자 정보 {user.userNo === 0 ? '등록' : '수정'}</h3></div>
                         <div className="modal-body">
-                            {/* 모달 팝업: 좌측 라벨, 우측 입력 테이블 구조 [cite: 2026-01-28] */}
                             <table className="input-table">
                                 <tbody>
                                     <tr>
                                         <th className="form-label">사용자 ID</th>
-                                        <td>
-                                            <input className="form-input" value={user.userId || ''} 
-                                                onChange={(e) => setUser({ ...user, userId: e.target.value })} 
-                                                readOnly={user.userNo !== 0} />
-                                        </td>
+                                        <td><input className="form-input" value={user.userId} onChange={(e) => setUser({...user, userId: e.target.value})} readOnly={user.userNo !== 0} /></td>
                                     </tr>
                                     <tr>
                                         <th className="form-label">이름</th>
-                                        <td><input className="form-input" value={user.userName || ''} 
-                                            onChange={(e) => setUser({ ...user, userName: e.target.value })} /></td>
+                                        <td><input className="form-input" value={user.userName} onChange={(e) => setUser({...user, userName: e.target.value})} /></td>
                                     </tr>
                                     <tr>
                                         <th className="form-label">이메일</th>
-                                        <td><input className="form-input" value={user.email || ''} 
-                                            onChange={(e) => setUser({ ...user, email: e.target.value })} /></td>
-                                    </tr>
-                                    {/* ✨ 권한 할당 행 추가 [cite: 2026-01-28] */}
-                                    <tr>
-                                        <th className="form-label">권한 설정</th>
-                                        <td>
-                                            <div className="role-checkbox-group">
-                                                {allRoles.map(r => (
-                                                    <label key={r.roleId} className="checkbox-label">
-                                                        <input type="checkbox" 
-                                                            checked={selectedRoleIds.includes(r.roleId)}
-                                                            onChange={() => handleRoleToggle(r.roleId)} />
-                                                        <span>{r.roleName}</span>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                        </td>
+                                        <td><input className="form-input" value={user.email} onChange={(e) => setUser({...user, email: e.target.value})} /></td>
                                     </tr>
                                     <tr>
                                         <th className="form-label">사용 여부</th>
                                         <td>
-                                            <select className="form-input" value={user.useYn} 
-                                                onChange={(e) => setUser({ ...user, useYn: e.target.value })}>
+                                            <select className="form-input" value={user.useYn} onChange={(e) => setUser({...user, useYn: e.target.value})}>
                                                 <option value="Y">사용</option><option value="N">미사용</option>
                                             </select>
                                         </td>
@@ -190,6 +170,33 @@ const UserManagement = () => {
                             <div className="btn-action-group">
                                 <button className="btn-secondary" onClick={() => setShowModal(false)}><X size={14} /> 닫기</button>
                                 <button className="btn-primary" onClick={handleSave}><Save size={14} /> 저장</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 권한 설정 모달 [cite: 2026-01-28] */}
+            {showRoleModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{ width: '500px' }}>
+                        <div className="modal-header"><h3>[{user.userName}] 권한 설정</h3></div>
+                        <div className="modal-body">
+                            <div className="role-checkbox-group">
+                                {allRoles.map(r => (
+                                    <label key={r.roleId} className="checkbox-label">
+                                        <input type="checkbox" checked={selectedRoleIds.includes(r.roleId)} 
+                                            onChange={() => setSelectedRoleIds(prev => prev.includes(r.roleId) ? prev.filter(id => id !== r.roleId) : [...prev, r.roleId])} />
+                                        <span>{r.roleName}</span>
+                                    </label>
+                                ))}
+                                {allRoles.length === 0 && <p style={{ color: '#94a3b8' }}>등록된 권한이 없습니다.</p>}
+                            </div>
+                        </div>
+                        <div className="btn-group">
+                            <div className="btn-action-group">
+                                <button className="btn-secondary" onClick={() => setShowRoleModal(false)}><X size={14} /> 닫기</button>
+                                <button className="btn-primary" onClick={handleSaveRoles}><Save size={14} /> 권한 저장</button>
                             </div>
                         </div>
                     </div>

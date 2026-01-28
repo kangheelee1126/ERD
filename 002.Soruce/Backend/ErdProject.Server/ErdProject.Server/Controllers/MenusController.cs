@@ -114,4 +114,47 @@ public class MenusController : ControllerBase
             return BadRequest(new { success = false, message = ex.Message });
         }
     }
+
+    //사용자 메뉴 조회
+    [HttpGet("authorized/{userNo}")]
+    public async Task<ActionResult<IEnumerable<MenuDto>>> GetAuthorizedMenus(int userNo)
+    {
+        // 1. 해당 사용자가 가진 모든 유효 권한 ID 조회 [cite: 2026-01-28]
+        var roleIds = await _context.UserRoles
+            .Where(ur => ur.UserNo == userNo)
+            .Select(ur => ur.RoleId)
+            .ToListAsync();
+
+        // 2. 권한들에 매핑된 메뉴 ID들을 중복 없이 추출 [cite: 2026-01-28]
+        var authorizedMenuIds = await _context.RoleMenus
+            .Where(rm => roleIds.Contains(rm.RoleId))
+            .Select(rm => rm.MenuId)
+            .Distinct()
+            .ToListAsync();
+
+        // 3. 허용된 메뉴 정보만 조회 (사용여부 'Y'인 것만)
+        var allMenus = await _context.SysMenus
+            .Where(m => authorizedMenuIds.Contains(m.MenuId) && m.UseYn == "Y")
+            .OrderBy(m => m.SortNo)
+            .ToListAsync();
+
+        // 4. 트리 구조 조립 (DTO 변환)
+        var menuMap = allMenus.Select(m => new MenuDto
+        {
+            MenuId = m.MenuId,
+            UpMenuId = m.UpMenuId,
+            MenuName = m.MenuName,
+            MenuUrl = m.MenuUrl,
+            MenuIcon = m.MenuIcon
+        }).ToDictionary(m => m.MenuId);
+
+        var tree = new List<MenuDto>();
+        foreach (var menu in menuMap.Values)
+        {
+            if (string.IsNullOrEmpty(menu.UpMenuId)) tree.Add(menu);
+            else if (menuMap.TryGetValue(menu.UpMenuId, out var parent)) parent.Children.Add(menu);
+        }
+
+        return Ok(tree);
+    }
 }
