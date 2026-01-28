@@ -20,6 +20,10 @@ namespace ErdProject.Server.Data
         public DbSet<Role> Roles { get; set; } = null!; // ✨ 이 부분도 경고 방지를 위해 추가했습니다.
         public DbSet<RoleMenu> RoleMenus { get; set; } = null!;
 
+        // ✨ UserRoles DbSet 추가 [cite: 2026-01-28]
+        public DbSet<UserRole> UserRoles { get; set; } = null!;
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
