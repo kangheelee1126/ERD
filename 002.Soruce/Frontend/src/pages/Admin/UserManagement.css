@@ -1,55 +1,51 @@
-/* --- 테이블 가이드 --- */
+/* --- 공통 레이아웃 [cite: 2026-01-28] --- */
+.page-container { padding: 20px; color: #e2e8f0; display: flex; flex-direction: column; gap: 15px; }
+.page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #334155; }
+.page-title { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+
+/* --- 테이블 가이드 (실선 및 중앙 정렬) [cite: 2026-01-28] --- */
 .user-table { width: 100%; border-collapse: collapse; border: 1px solid #334155; }
-.user-table th { background-color: #1e293b; color: #94a3b8; padding: 12px; text-align: center; border: 1px solid #334155; }
-.user-table td { padding: 12px; border: 1px solid #334155; color: #cbd5e1; }
+.user-table th { background-color: #1e293b; color: #94a3b8; padding: 12px; text-align: center; border: 1px solid #334155; font-size: 0.95rem; }
+.user-table td { padding: 12px; border: 1px solid #334155; color: #cbd5e1; vertical-align: middle; }
 .text-center { text-align: center; }
 
-/* ✨ 관리 컬럼: 버튼 전체 폭보다 여유 있게 설정 */
-.col-manage {
-    width: 180px; /* 버튼 2개(약 140px) + 여유 여백 */
-    min-width: 180px;
-}
+/* ✨ 관리 컬럼: 버튼 전체 폭보다 여유 있게 설정 [cite: 2026-01-28] */
+.col-manage { width: 180px; min-width: 180px; }
+.btn-table-group { display: flex; justify-content: center; gap: 8px; }
 
-.btn-table-group {
-    display: flex;
-    justify-content: center; /* 중앙 정렬 */
-    gap: 8px; /* 버튼 사이 간격 */
-}
-
-/* --- 상태 색상 --- */
+/* --- 상태 색상 및 강조 [cite: 2026-01-28] --- */
 .status-blue { color: #3b82f6; font-weight: 700; }
 .status-red { color: #ef4444; font-weight: 700; }
+.highlight-id { color: #3b82f6; font-weight: 600; }
 
-/* --- 버튼 스타일 복구 --- */
+/* --- 버튼 스타일 (아이콘 포함) [cite: 2026-01-28] --- */
 .btn-primary { background-color: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .btn-secondary { background-color: #334155; color: #f8fafc; border: 1px solid #475569; padding: 8px 18px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
-/* 목록 내 버튼들 */
 .btn-table-edit, .btn-table-delete {
     background-color: #334155; color: #f8fafc; border: 1px solid #475569;
     padding: 6px 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;
     font-size: 0.85rem; transition: all 0.2s ease;
 }
-
 .btn-table-edit:hover { background-color: #475569; border-color: #3b82f6; }
 .btn-table-delete:hover { background-color: #ef4444; border-color: #ef4444; }
 
-/* 팝업 위치 및 구조 고정 */
+/* --- 모달 위치 및 구조 고정 [cite: 2026-01-28] --- */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.85); display: flex; justify-content: center; align-items: center; z-index: 10000; }
-.modal-content { background-color: #1e293b; width: 480px; padding: 25px; border-radius: 8px; border: 1px solid #334155; }
+.modal-content { background-color: #1e293b; width: 520px; padding: 25px; border-radius: 8px; border: 1px solid #334155; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+.modal-header { margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+.modal-header h3 { font-size: 1.25rem; color: #f8fafc; margin: 0; }
 
-/* ... 기존 스타일 유지 ... */
+/* ✨ 모달 내 좌측 라벨, 우측 입력 테이블 구조 [cite: 2026-01-28] */
+.input-table { width: 100%; border-collapse: collapse; }
+.input-table th { width: 120px; text-align: left; color: #94a3b8; padding: 12px 10px; font-size: 0.9rem; border-bottom: 1px solid #334155; background-color: #1e293b; }
+.input-table td { padding: 8px 10px; border-bottom: 1px solid #334155; }
+.form-input { width: 100%; background-color: #0f172a; border: 1px solid #334155; padding: 10px; color: #fff; border-radius: 4px; box-sizing: border-box; }
+.form-input:focus { border-color: #3b82f6; outline: none; }
 
-/* 목록 내 버튼들 공통 스타일 */
-.btn-table-edit, .btn-table-delete {
-    background-color: #334155; color: #f8fafc; border: 1px solid #475569;
-    padding: 6px 12px; border-radius: 4px; cursor: pointer; 
-    /* ✨ 아이콘과 텍스트 배치를 위한 flex 설정이 이미 되어 있음 */
-    display: flex; align-items: center; gap: 4px; 
-    font-size: 0.85rem; transition: all 0.2s ease;
-}
+/* 권한 체크박스 그룹 */
+.role-checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; padding: 5px 0; }
+.checkbox-label { display: flex; gap: 6px; cursor: pointer; font-size: 0.9rem; color: #cbd5e1; }
 
-.btn-table-edit:hover { background-color: #475569; border-color: #3b82f6; }
-.btn-table-delete:hover { background-color: #ef4444; border-color: #ef4444; }
-
-/* ... 나머지 스타일 유지 ... */
+.btn-group { display: flex; justify-content: flex-end; width: 100%; margin-top: 25px; }
+.btn-action-group { display: flex; gap: 10px; }

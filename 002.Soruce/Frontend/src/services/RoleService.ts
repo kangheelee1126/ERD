@@ -1,25 +1,33 @@
-// ../ 를 사용하여 services 폴더를 나간 후 api/http 경로를 찾습니다.
 import api from '../api/http'; 
 
 export const RoleService = {
-    // 권한 목록 조회
+    // 1. 전체 권한 목록 조회
     getRoles: async () => {
-        // api 인스턴스에 /api 기본 경로가 설정되어 있으므로 /Role만 작성합니다.
         const response = await api.get('/Role');
         return response.data;
     },
 
-    // 권한 저장 (신규/수정 통합)
+    // 2. 권한 정보 저장 (신규/수정) [cite: 2026-01-28]
     saveRole: async (role: any) => {
-        // /api/Role/save 로 요청이 전송됩니다.
         const response = await api.post('/Role/save', role);
         return response.data;
     },
 
-    // 권한 삭제
-    deleteRole: async (roleNo: number) => {
-        // /api/Role/{roleNo} 로 요청이 전송됩니다.
-        const response = await api.delete(`/Role/${roleNo}`);
+    // 3. 권한 삭제 (RoleId: string) [cite: 2026-01-28]
+    deleteRole: async (roleId: string) => {
+        const response = await api.delete(`/Role/${roleId}`);
+        return response.data;
+    },
+
+    // ✨ 4. 특정 권한의 메뉴 ID 목록 조회 (추가) [cite: 2026-01-28]
+    getRoleMenus: async (roleId: string): Promise<string[]> => {
+        const response = await api.get(`/Role/${roleId}/menus`);
+        return response.data;
+    },
+
+    // ✨ 5. 권한별 메뉴 접근 권한 저장 (추가) [cite: 2026-01-28]
+    saveRoleMenus: async (data: { roleId: string; menuIds: string[] }) => {
+        const response = await api.post('/Role/save-menus', data);
         return response.data;
     }
 };
