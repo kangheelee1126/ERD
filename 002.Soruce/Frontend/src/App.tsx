@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import ErdPage from './pages/ERD/ErdPage';
 // 👇 새로 만든 페이지 import 확인
 import MenuManagePage from './pages/System/MenuManagePage'; 
+import UserManagement from './pages/Admin/UserManagement';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
 
         {/* 나머지 준비중 페이지들 */}
         <Route path="/sr" element={<div style={{color:'white'}}>SR 관리 페이지</div>} />
-        <Route path="/users" element={<div style={{color:'white'}}>사용자 관리 페이지</div>} />
+        <Route path="/admin/users" element={<UserManagement />} />
       </Route>
 
       {/* 3. 예외 처리 */}

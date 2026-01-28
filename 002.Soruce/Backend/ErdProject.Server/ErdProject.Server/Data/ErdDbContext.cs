@@ -15,9 +15,17 @@ namespace ErdProject.Server.Data
 
         public DbSet<SysMenu> SysMenus { get; set; } = null!;
 
+        // ✨ 추가: 권한 및 권한-메뉴 매핑 테이블
+        // 컨트롤러에서 .Roles 로 접근하므로 이름을 Roles로 지정합니다.
+        public DbSet<Role> Roles { get; set; } = null!; // ✨ 이 부분도 경고 방지를 위해 추가했습니다.
+        public DbSet<RoleMenu> RoleMenus { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // ✨ RoleMenu는 복합키이므로 프로그램 구동을 위해 이 설정이 반드시 필요합니다.
+            modelBuilder.Entity<RoleMenu>().HasKey(rm => new { rm.RoleId, rm.MenuId });
         }
     }
 }

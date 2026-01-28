@@ -1,0 +1,55 @@
+/* --- 테이블 가이드 --- */
+.user-table { width: 100%; border-collapse: collapse; border: 1px solid #334155; }
+.user-table th { background-color: #1e293b; color: #94a3b8; padding: 12px; text-align: center; border: 1px solid #334155; }
+.user-table td { padding: 12px; border: 1px solid #334155; color: #cbd5e1; }
+.text-center { text-align: center; }
+
+/* ✨ 관리 컬럼: 버튼 전체 폭보다 여유 있게 설정 */
+.col-manage {
+    width: 180px; /* 버튼 2개(약 140px) + 여유 여백 */
+    min-width: 180px;
+}
+
+.btn-table-group {
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    gap: 8px; /* 버튼 사이 간격 */
+}
+
+/* --- 상태 색상 --- */
+.status-blue { color: #3b82f6; font-weight: 700; }
+.status-red { color: #ef4444; font-weight: 700; }
+
+/* --- 버튼 스타일 복구 --- */
+.btn-primary { background-color: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.btn-secondary { background-color: #334155; color: #f8fafc; border: 1px solid #475569; padding: 8px 18px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+/* 목록 내 버튼들 */
+.btn-table-edit, .btn-table-delete {
+    background-color: #334155; color: #f8fafc; border: 1px solid #475569;
+    padding: 6px 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;
+    font-size: 0.85rem; transition: all 0.2s ease;
+}
+
+.btn-table-edit:hover { background-color: #475569; border-color: #3b82f6; }
+.btn-table-delete:hover { background-color: #ef4444; border-color: #ef4444; }
+
+/* 팝업 위치 및 구조 고정 */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.85); display: flex; justify-content: center; align-items: center; z-index: 10000; }
+.modal-content { background-color: #1e293b; width: 480px; padding: 25px; border-radius: 8px; border: 1px solid #334155; }
+
+/* ... 기존 스타일 유지 ... */
+
+/* 목록 내 버튼들 공통 스타일 */
+.btn-table-edit, .btn-table-delete {
+    background-color: #334155; color: #f8fafc; border: 1px solid #475569;
+    padding: 6px 12px; border-radius: 4px; cursor: pointer; 
+    /* ✨ 아이콘과 텍스트 배치를 위한 flex 설정이 이미 되어 있음 */
+    display: flex; align-items: center; gap: 4px; 
+    font-size: 0.85rem; transition: all 0.2s ease;
+}
+
+.btn-table-edit:hover { background-color: #475569; border-color: #3b82f6; }
+.btn-table-delete:hover { background-color: #ef4444; border-color: #ef4444; }
+
+/* ... 나머지 스타일 유지 ... */
