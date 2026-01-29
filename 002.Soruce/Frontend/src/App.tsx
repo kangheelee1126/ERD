@@ -9,6 +9,9 @@ import UserManagement from './pages/Admin/UserManagement';
 // ✨ 권한 관리 페이지 import 추가
 import RoleManagement from './pages/Admin/RoleManagement';
 
+import SamplePage from './pages/Sample/sample';       // [cite: 2026-01-28]
+
+
 function App() {
   return (
     <Routes>
@@ -34,6 +37,10 @@ function App() {
 
         {/* 나머지 준비중 페이지들 */}
         <Route path="/sr" element={<div style={{color:'white'}}>SR 관리 페이지</div>} />
+
+        {/* 3. 표준 샘플 페이지 (TypeScript 경고 해결 지점) [cite: 2026-01-28] */}
+        <Route path="/sample" element={<SamplePage />} />
+
       </Route>
 
       {/* 3. 예외 처리 */}

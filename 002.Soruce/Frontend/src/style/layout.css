@@ -1,0 +1,119 @@
+@import "./variables.css";
+
+/* --- 1. 기본 페이지 컨테이너 (사이드바와 30px 간격 유지) [cite: 2026-01-28] --- */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 30px; /* ✨ 지침: 사이드바 여백 반영 */
+  gap: var(--grid-gap);
+  overflow: hidden;
+}
+
+/* --- 2. 가변 컨텐츠 그리드 (1~4분할) [cite: 2026-01-28] --- */
+.content-grid {
+  display: grid;
+  gap: var(--grid-gap);
+  flex: 1;
+  min-height: 0;
+}
+
+.layout-1 { grid-template-columns: 1fr; }
+.layout-2 { grid-template-columns: 1fr 1fr; }
+.layout-3 {
+  grid-template-areas: "top top" "left right";
+  grid-template-rows: auto 1fr;
+}
+.layout-4 { 
+  grid-template-columns: 1fr 1fr; 
+  grid-template-rows: 1fr 1fr; 
+}
+
+/* --- 3. 표준 테이블 (지침: 헤더 중앙 정렬, 전 셀 실선) [cite: 2026-01-28] --- */
+.standard-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: var(--border-style);
+}
+
+.standard-table th {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: var(--border-style); /* ✨ 지침: 실선 구분 */
+  padding: 12px;
+  font-size: 0.85rem;
+  text-align: center;         /* ✨ 지침: 헤더 중앙 정렬 */
+  color: var(--text-muted);
+}
+
+.standard-table td {
+  border: var(--border-style); /* ✨ 지침: 실선 구분 */
+  padding: 10px;
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+.standard-table td.center { text-align: center; }
+
+/* --- 4. 표준 폼 및 입력 요소 (지침: 좌라벨, 우입력 및 다크 테마) [cite: 2026-01-27, 2026-01-28] --- */
+.form-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.form-table th {
+  width: 140px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: var(--border-style);
+  padding: 12px;
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.form-table td {
+  border: var(--border-style);
+  padding: 8px 12px;
+}
+
+/* ✨ [해결] 입력 필드 스타일 강제 적용 [cite: 2026-01-28] */
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--bg-input); /* 다크 배경 [cite: 2026-01-28] */
+  border: var(--border-style);       /* 실선 테두리 [cite: 2026-01-28] */
+  color: var(--text-main);           /* 밝은 글자색 [cite: 2026-01-28] */
+  border-radius: 4px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary-color); /* 포커스 시 파란색 [cite: 2026-01-28] */
+}
+
+/* --- 5. 구획(Section) 디자인 --- */
+.section {
+  background-color: var(--bg-card);
+  border: var(--border-style);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.part-header {
+  padding: 12px 16px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-bottom: var(--border-style);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.part-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}

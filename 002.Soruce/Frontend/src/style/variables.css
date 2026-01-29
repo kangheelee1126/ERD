@@ -1,0 +1,24 @@
+:root {
+    /* --- 시스템 테마 컬러 (Dark Theme) --- */
+    --bg-main: #0f172a;           /* 전체 배경 (Deep Navy) [cite: 2026-01-28] */
+    --bg-header: #1e293b;         /* 헤더 배경 */
+    --bg-card: #1e293b;           /* 섹션/카드 배경 */
+    --bg-input: #0f172a;          /* 입력 필드 배경 */
+  
+    /* --- 상태 및 포인트 컬러 (지침 준수) --- */
+    --primary-color: #3b82f6;     /* 사용(파란색) [cite: 2026-01-28] */
+    --danger-color: #ef4444;      /* 미사용/삭제(빨간색) [cite: 2026-01-28] */
+    --success-color: #10b981;     /* 성공/완료 */
+    
+    /* --- 텍스트 컬러 --- */
+    --text-main: #f8fafc;         /* 기본 텍스트 */
+    --text-muted: #94a3b8;        /* 라벨/보조 텍스트 */
+  
+    /* --- 표준 규격 및 스타일 --- */
+    --border-color: #334155;      
+    --border-style: 1px solid var(--border-color); /* 실선 구분 지침 반영 [cite: 2026-01-28] */
+    
+    --header-height: 64px;        /* 기존 Sidebar와 높이 동기화 [cite: 2026-01-27, 2026-01-28] */
+    --sidebar-width: 260px;       /* 기존 Sidebar와 너비 동기화 [cite: 2026-01-27] */
+    --grid-gap: 24px;             /* 구획 간 표준 간격 */
+  }

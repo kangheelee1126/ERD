@@ -1,0 +1,106 @@
+@import "./variables.css";
+
+/* --- 1. 상단 페이지 헤더 (지침: 제목 좌측, 버튼 우측 끝) [cite: 2026-01-28] --- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: var(--border-style);
+  margin-bottom: 20px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* --- 2. 검색 필터 바 (지침: 필터 좌측, 버튼 우측) [cite: 2026-01-28] --- */
+.filter-bar {
+  background-color: var(--bg-card);
+  border: var(--border-style);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-item label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* --- 3. 공통 버튼 스타일 (지침: 색상 구분 및 아이콘) [cite: 2026-01-28] --- */
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  border: none;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* 사용/저장/등록 (파란색) [cite: 2026-01-28] */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+/* 조회 버튼 (파란색 계열) [cite: 2026-01-28] */
+.btn-search {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+/* 삭제/중지 (빨간색) [cite: 2026-01-28] */
+.btn-danger {
+  background-color: var(--danger-color);
+  color: #fff;
+}
+
+/* 초기화/취소 (무채색) */
+.btn-reset {
+  background-color: #475569;
+  color: #fff;
+}
+
+/* 상태 텍스트 색상 (지침 반영) [cite: 2026-01-28] */
+.status-use { color: var(--primary-color); font-weight: 700; }
+.status-stop { color: var(--danger-color); font-weight: 700; }
