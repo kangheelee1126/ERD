@@ -1,164 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import { Briefcase, Search, Plus, Save, Trash2 } from 'lucide-react';
-import axiosInstance from '../../api/http.ts';
+import React, { useState } from 'react';
+/* [중요] 아래 임포트 구문이 반드시 있어야 아이콘이 나옵니다. */
+import { Briefcase, Search, List, Plus, Edit, Trash2, Info, X, Save } from 'lucide-react';
 import './CustomerManagement.css';
 
+interface Customer {
+  customerId: number;
+  custCd: string;
+  custNm: string;
+  industryCd: string;
+  devCapabilityCd: string;
+  sourceModYn: string;
+  useYn: string;
+}
+
 const CustomerManagement: React.FC = () => {
-  const [customers, setCustomers] = useState<any[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [customers] = useState<Customer[]>([
+    { customerId: 1, custCd: 'CUST-001', custNm: '(주)에이치에스 테크', industryCd: '반도체', devCapabilityCd: '상', sourceModYn: 'N', useYn: 'Y' },
+    { customerId: 2, custCd: 'CUST-002', custNm: '디지털 솔루션즈', industryCd: '자동차', devCapabilityCd: '중', sourceModYn: 'Y', useYn: 'Y' },
+    { customerId: 3, custCd: 'CUST-003', custNm: '미래정밀 (미사용)', industryCd: '화학', devCapabilityCd: '하', sourceModYn: 'N', useYn: 'N' }
+  ]);
 
-  const currentUserId = 'admin'; // 감사 필드용 [cite: 2026-01-29]
+  const [showModal, setShowModal] = useState(false);
+  const [cust, setCust] = useState<Partial<Customer>>({});
 
-  useEffect(() => { fetchCustomers(); }, []);
-
-  // 고객사 목록 조회 [cite: 2026-01-29]
-  const fetchCustomers = async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get('/system/customer', {
-        params: { keyword: searchTerm }
-      });
-      setCustomers(res.data);
-    } catch (err) {
-      console.error('고객사 조회 실패:', err);
-    } finally {
-      setLoading(false);
-    }
+  const openModal = (target: any = null) => {
+    setCust(target || { useYn: 'Y' });
+    setShowModal(true);
   };
 
-  const handleValueChange = (index: number, field: string, value: any) => {
-    const newItems = [...customers];
-    newItems[index] = { ...newItems[index], [field]: value };
-    setCustomers(newItems);
-  };
-
-  const addRow = () => {
-    setCustomers([...customers, { 
-      customer_id: 0, 
-      cust_cd: '', 
-      cust_nm: '', 
-      use_yn: 'Y', 
-      sort_no: customers.length + 1, 
-      isNew: true 
-    }]);
-  };
-
-  const deleteRow = async (index: number) => {
-    const target = customers[index];
-    if (target.isNew) {
-      setCustomers(customers.filter((_, i) => i !== index));
-      return;
-    }
-
-    if (!window.confirm('고객사 정보를 즉시 삭제하시겠습니까?')) return;
-    try {
-      await axiosInstance.delete(`/system/customer/${target.customer_id}`);
-      setCustomers(customers.filter((_, i) => i !== index));
-      alert('삭제되었습니다.');
-    } catch (err) {
-      alert('삭제 중 오류가 발생했습니다.');
-    }
-  };
-
-  const saveAll = async () => {
-    // 필수 입력 검증 [cite: 2026-01-29]
-    for (let i = 0; i < customers.length; i++) {
-      const row = customers[i];
-      if (!row.cust_cd?.trim()) return alert(`${i + 1}행: 고객사 코드는 필수입니다.`);
-      if (!row.cust_nm?.trim()) return alert(`${i + 1}행: 고객사 명칭은 필수입니다.`);
-    }
-
-    const validData = customers.map(item => ({
-      ...item,
-      created_by: item.isNew ? currentUserId : item.created_by,
-      updated_by: currentUserId
-    }));
-
-    if (!window.confirm('변경 사항을 저장하시겠습니까?')) return;
-
-    setLoading(true);
-    try {
-      await axiosInstance.post('/system/customer/save', validData);
-      alert('성공적으로 저장되었습니다.');
-      fetchCustomers();
-    } catch (err) {
-      alert('저장 중 오류가 발생했습니다.');
-    } finally {
-      setLoading(false);
+  const handleDelete = (id: number) => {
+    if (window.confirm('삭제하시겠습니까?')) {
+      console.log(`${id} 삭제 로직 수행`);
     }
   };
 
   return (
     <div className="page-container">
-      {/* 상단 레이아웃: 제목 좌측, 버튼 우측 [cite: 2026-01-28] */}
       <div className="page-header-layout">
         <div className="header-left">
           <Briefcase size={20} color="var(--primary-color)" />
           <h2 className="header-title">고객사 정보 관리</h2>
         </div>
-        <div className="header-right header-button-group">
-          <button className="btn-action btn-blue" onClick={addRow}><Plus size={14} /> 행추가</button>
-          <button className="btn-action btn-save" onClick={saveAll} disabled={loading}><Save size={14} /> 저장</button>
-        </div>
       </div>
 
-      {/* 검색영역: 조회 버튼 우측 배치 [cite: 2026-01-29] */}
       <div className="filter-bar">
         <div className="filter-item">
           <label>검색어</label>
-          <input 
-            type="text" 
-            placeholder="고객사 코드 또는 명칭" 
-            className="filter-input"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && fetchCustomers()}
-          />
+          <input type="text" placeholder="고객사 코드 또는 명칭" className="filter-input" />
         </div>
-        <button className="btn-search" onClick={fetchCustomers}><Search size={14} /> 조회</button>
+        <button className="btn-search"><Search size={14} /> 조회</button>
       </div>
 
       <div className="content-body section">
-        <div className="table-wrapper overflow-x-auto">
-          <table className="standard-table">
+        <div className="part-header">
+          <div className="header-left">
+            <List size={16} />
+            <span className="part-title">고객사 리스트</span>
+            <span className="part-desc">등록된 고객사의 상세 기준 정보를 관리합니다.</span>
+          </div>
+          <div className="header-right">
+            <button className="btn-action btn-blue" onClick={() => openModal()}>
+              <Plus size={14} /> 신규
+            </button>
+          </div>
+        </div>
+
+        <div className="part-body">
+          <table className="standard-table fixed-layout">
             <thead>
               <tr>
-                <th style={{ width: '120px' }}>고객사 코드<span className="required-mark">*</span></th>
-                <th style={{ width: '180px' }}>고객사 명칭<span className="required-mark">*</span></th>
-                <th style={{ width: '120px' }}>사업자번호</th>
-                <th style={{ width: '120px' }}>대표전화</th>
-                <th>주소</th>
-                <th style={{ width: '70px' }}>정렬<span className="required-mark">*</span></th>
-                <th style={{ width: '90px' }}>사용여부</th>
+                <th style={{ width: '50px' }}>No</th>
+                <th style={{ width: '120px' }}>고객사 코드</th>
+                <th>고객사 명칭</th>
+                <th style={{ width: '140px' }}>제조 산업</th>
+                <th style={{ width: '80px' }}>사용여부</th>
+                <th style={{ width: '60px' }}>수정</th>
                 <th style={{ width: '60px' }}>삭제</th>
               </tr>
             </thead>
             <tbody>
-              {customers.map((c, idx) => (
-                <tr key={idx}>
+              {customers.map((c: Customer, idx: number) => (
+                <tr key={c.customerId}>
+                  <td className="center">{idx + 1}</td>
+                  <td className="center highlight-id">{c.custCd}</td>
+                  <td className="ellipsis" title={c.custNm}>{c.custNm}</td>
+                  <td className="center">{c.industryCd}</td>
                   <td className="center">
-                    {/* PK 수정 불가 로직 [cite: 2026-01-29] */}
-                    {c.isNew ? (
-                      <input type="text" value={c.cust_cd || ''} className="table-input center" 
-                             onChange={(e) => handleValueChange(idx, 'cust_cd', e.target.value)} />
-                    ) : (
-                      <span className="readonly-text">{c.cust_cd}</span>
-                    )}
-                  </td>
-                  <td><input type="text" value={c.cust_nm || ''} className="table-input" onChange={(e) => handleValueChange(idx, 'cust_nm', e.target.value)} /></td>
-                  <td><input type="text" value={c.biz_no || ''} className="table-input center" onChange={(e) => handleValueChange(idx, 'biz_no', e.target.value)} /></td>
-                  <td><input type="text" value={c.tel_no || ''} className="table-input center" onChange={(e) => handleValueChange(idx, 'tel_no', e.target.value)} /></td>
-                  <td><input type="text" value={c.addr1 || ''} className="table-input" onChange={(e) => handleValueChange(idx, 'addr1', e.target.value)} /></td>
-                  <td className="center"><input type="number" value={c.sort_no ?? ''} className="table-input center" onChange={(e) => handleValueChange(idx, 'sort_no', Number(e.target.value))} /></td>
-                  <td className="center">
-                    <select className={`table-select center ${c.use_yn === 'Y' ? 'status-y' : 'status-n'}`} 
-                            value={c.use_yn} onChange={(e) => handleValueChange(idx, 'use_yn', e.target.value)}>
-                      <option value="Y">사용</option><option value="N">미사용</option>
-                    </select>
+                    <span className={c.useYn === 'Y' ? 'status-y' : 'status-n'}>
+                      {c.useYn === 'Y' ? '사용' : '미사용'}
+                    </span>
                   </td>
                   <td className="center">
-                    <Trash2 size={14} color="#ef4444" className="cursor-pointer" onClick={() => deleteRow(idx)} />
+                    {/* [오류 해결] 아이콘 색상 명시적 지정 (혹시 모를 상속 문제 방지) */}
+                    <button className="btn-table-icon-only edit" onClick={() => openModal(c)} title="수정">
+                      <Edit size={16} color="currentColor" />
+                    </button>
+                  </td>
+                  <td className="center">
+                    <button className="btn-table-icon-only delete" onClick={() => handleDelete(c.customerId)} title="삭제">
+                      <Trash2 size={16} color="currentColor" />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -166,6 +107,37 @@ const CustomerManagement: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content wide-modal">
+            <div className="modal-header">
+              <div className="header-title-area">
+                <Info size={18} color="var(--primary-color)" />
+                <h3>고객사 상세 정보</h3>
+              </div>
+              <button className="modal-close" onClick={() => setShowModal(false)}><X size={20} /></button>
+            </div>
+            <div className="modal-scroll-area">
+              <table className="input-table">
+                <tbody>
+                  <tr>
+                    <th>고객사 명칭</th>
+                    <td><input className="form-input" defaultValue={cust.custNm} /></td>
+                  </tr>
+                  {/* ... 나머지 항목 ... */}
+                </tbody>
+              </table>
+            </div>
+            <div className="btn-group">
+              <div className="btn-action-group">
+                <button className="btn-secondary" onClick={() => setShowModal(false)}><X size={14} /> 취소</button>
+                <button className="btn-primary" onClick={() => setShowModal(false)}><Save size={14} /> 저장</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

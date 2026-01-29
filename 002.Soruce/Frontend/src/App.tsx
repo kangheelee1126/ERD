@@ -12,6 +12,8 @@ import SamplePage from './pages/Sample/sample';       // [cite: 2026-01-28]
 // ✨ 신규 페이지 임포트 [cite: 2026-01-28]
 import CommonCode from './pages/System/CommonCode';
 
+import CustomerManagement from './pages/base/CustomerManagement'; // [cite: 2026-01-28]
+
 
 function App() {
   return (
@@ -45,6 +47,8 @@ function App() {
         {/* 3. 공통코드 관리 페이지 (System 메뉴) ✨ [cite: 2026-01-28] */}
         <Route path="/system/CommonCode" element={<CommonCode />} />
 
+        {/* ✨ [추가] 기준정보 관리 라우트 [cite: 2026-01-28] */}
+        <Route path="/base/customer" element={<CustomerManagement />} />
       </Route>
 
       {/* 3. 예외 처리 */}

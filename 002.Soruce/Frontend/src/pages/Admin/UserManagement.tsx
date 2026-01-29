@@ -40,14 +40,13 @@ const UserManagement = () => {
         setShowModal(true);
     };
 
-    // ✨ 권한 설정 전용 모달 (API 실패 시에도 실행 보장) [cite: 2026-01-28]
+    // ✨ 권한 설정 전용 모달 [cite: 2026-01-28]
     const openRoleModal = async (targetUser: any) => {
         setUser(targetUser);
         try {
             const roleIds = await UserRoleService.getUserRoles(targetUser.userNo);
             setSelectedRoleIds(Array.isArray(roleIds) ? roleIds : []);
         } catch (error) {
-            // ✨ 에러 발생 시에도 빈 목록으로 팝업 진입 허용 [cite: 2026-01-28]
             console.warn("권한 로드 실패 - 신규 설정 모드로 전환");
             setSelectedRoleIds([]);
         } finally {
@@ -101,33 +100,66 @@ const UserManagement = () => {
                         {/* 헤더 중앙 정렬 및 실선 가이드 [cite: 2026-01-28] */}
                         <tr>
                             <th className="text-center" style={{ width: '60px' }}>No</th>
-                            <th className="text-center">아이디</th>
-                            <th className="text-center">이름</th>
+                            
+                            {/* ✨ 아이디: 폭 120px, 왼쪽 정렬 */}
+                            <th className="text-left" style={{ width: '120px' }}>아이디</th>
+                            
+                            {/* ✨ 이름: 폭 200px, 가운데 정렬 */}
+                            <th className="text-center" style={{ width: '200px' }}>이름</th>
+                            
                             <th className="text-center">이메일</th>
                             <th className="text-center" style={{ width: '100px' }}>사용여부</th>
-                            <th className="text-center" style={{ width: '120px' }}>등록일</th>
-                            <th className="text-center col-manage" style={{ width: '250px' }}>관리</th>
+                            
+                            {/* ✨ 등록일: 폭 200px, 가운데 정렬 */}
+                            <th className="text-center" style={{ width: '200px' }}>등록일</th>
+                            
+                            {/* ✨ 권한: 폭 100px, 가운데 정렬 */}
+                            <th className="text-center" style={{ width: '100px' }}>권한</th>
+                            
+                            {/* ✨ 수정: 폭 80px, 가운데 정렬 */}
+                            <th className="text-center" style={{ width: '80px' }}>수정</th>
+                            
+                            {/* ✨ 삭제: 폭 80px, 가운데 정렬 */}
+                            <th className="text-center" style={{ width: '80px' }}>삭제</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((u, idx) => (
                             <tr key={u.userNo}>
                                 <td className="text-center">{idx + 1}</td>
-                                <td className="text-center highlight-id">{u.userId}</td>
-                                <td>{u.userName}</td>
+                                
+                                {/* 아이디: 왼쪽 정렬 적용 */}
+                                <td className="text-left highlight-id">{u.userId}</td>
+                                
+                                {/* 이름: 가운데 정렬 적용 */}
+                                <td className="text-center">{u.userName}</td>
+                                
                                 <td>{u.email || '-'}</td>
                                 <td className="text-center">
                                     <span className={u.useYn === 'Y' ? 'status-blue' : 'status-red'}>
                                         {u.useYn === 'Y' ? '사용' : '미사용'}
                                     </span>
                                 </td>
+                                
+                                {/* 등록일: 가운데 정렬 */}
                                 <td className="text-center">{formatDate(u.regDt)}</td>
+
+                                {/* 버튼들: 중앙 정렬 */}
                                 <td className="text-center">
-                                    <div className="btn-table-group">
-                                        <button className="btn-table-edit" onClick={() => openRoleModal(u)}><ShieldCheck size={14} /> 권한설정</button>
-                                        <button className="btn-table-edit" onClick={() => openModal(u)}><Edit size={14} /> 수정</button>
-                                        <button className="btn-table-delete" onClick={() => handleDelete(u.userNo)}><Trash2 size={14} /> 삭제</button>
-                                    </div>
+                                    <button className="btn-table-edit center-btn" onClick={() => openRoleModal(u)}>
+                                        <ShieldCheck size={14} /> 권한설정
+                                    </button>
+                                </td>
+                                <td className="text-center">
+                                    <button className="btn-table-edit center-btn" onClick={() => openModal(u)}>
+                                        <Edit size={14} /> 수정
+                                    </button>
+                                </td>
+                                <td className="text-center">
+                                    {/* 삭제 버튼: 빨간색 스타일 클래스(btn-table-delete) 사용 */}
+                                    <button className="btn-table-delete center-btn" onClick={() => handleDelete(u.userNo)}>
+                                        <Trash2 size={14} /> 삭제
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -135,7 +167,7 @@ const UserManagement = () => {
                 </table>
             </div>
 
-            {/* 사용자 정보 모달 (라벨-입력 테이블 구조) [cite: 2026-01-28] */}
+            {/* 사용자 정보 모달 (라벨-입력 테이블 구조) */}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content" style={{ width: '520px' }}>
@@ -176,7 +208,7 @@ const UserManagement = () => {
                 </div>
             )}
 
-            {/* 권한 설정 모달 [cite: 2026-01-28] */}
+            {/* 권한 설정 모달 */}
             {showRoleModal && (
                 <div className="modal-overlay">
                     <div className="modal-content" style={{ width: '500px' }}>

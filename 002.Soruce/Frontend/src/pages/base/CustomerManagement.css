@@ -1,40 +1,91 @@
-/* 기본 공통 스타일 상속 */
-.table-wrapper {
-    width: 100%;
-    background: #1e1e1e;
-    border-radius: 4px;
-  }
-  
-  .overflow-x-auto {
-    overflow-x: auto; /* 컬럼이 많을 경우 가로 스크롤 활성화 */
-  }
-  
-  /* [지침] 헤더 중앙 정렬 및 셀 실선 구분 [cite: 2026-01-28] */
-  .standard-table th {
-    background-color: #2d2d2d;
-    color: #aaa;
-    text-align: center !important;
-    border: 1px solid #444;
-    white-space: nowrap;
-  }
-  
-  .standard-table td {
-    border: 1px solid #444;
-  }
-  
-  /* [지침] 삭제 컬럼 60px 고정 [cite: 2026-01-29] */
-  .standard-table th:last-child,
-  .standard-table td:last-child {
-    width: 60px !important;
-    min-width: 60px !important;
-    text-align: center;
-  }
-  
-  .required-mark {
-    color: #ef4444;
-    margin-left: 4px;
-  }
-  
-  /* 상태별 색상 지침 [cite: 2026-01-28] */
-  .status-y { color: #3b82f6 !important; font-weight: bold; }
-  .status-n { color: #ef4444 !important; font-weight: bold; }
+/* [지침] 그리드 표준 스타일 및 터짐 방지 */
+.standard-table.fixed-layout {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.standard-table th {
+  background-color: #2d2d2d;
+  color: #aaa;
+  text-align: center !important;
+  border: 1px solid #444;
+  padding: 10px 5px;
+}
+
+.standard-table td {
+  border: 1px solid #444;
+  padding: 6px 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle; /* 버튼 수직 중앙 정렬 보정 */
+}
+
+/* [지침] 수정/삭제 컬럼 폭 60px 고정 */
+.standard-table th:nth-last-child(1), 
+.standard-table td:nth-last-child(1),
+.standard-table th:nth-last-child(2), 
+.standard-table td:nth-last-child(2) {
+  width: 60px !important;
+  min-width: 60px !important;
+  padding: 2px !important; /* 패딩 최소화 */
+}
+
+/* [지침] 아이콘 버튼 정중앙 배치 및 스타일 */
+.center {
+  text-align: center !important;
+}
+
+.btn-table-icon-only {
+  display: inline-flex !important; /* flex 강제 적용 */
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #475569;
+  background: #334155;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0; /* 내부 패딩 제거하여 아이콘 공간 확보 */
+}
+
+/* [핵심 수정] 아이콘(SVG) 강제 표시 설정 */
+.btn-table-icon-only svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 2px;
+  display: block; /* 인라인 여백 제거 */
+}
+
+/* 수정 버튼 호버 */
+.btn-table-icon-only.edit:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* 삭제 버튼 위험 강조 */
+.btn-table-icon-only.delete {
+  color: #f87171;
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.btn-table-icon-only.delete:hover {
+  background: #ef4444 !important;
+  color: #fff !important;
+}
+
+/* 모달 등 기타 스타일은 유지 */
+.wide-modal { width: 600px; max-height: 85vh; display: flex; flex-direction: column; background: #1e1e1e; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #334155; }
+.header-title-area { display: flex; align-items: center; gap: 8px; }
+.modal-scroll-area { flex: 1; overflow-y: auto; padding: 15px; }
+.input-table { width: 100%; border-collapse: collapse; }
+.input-table th { width: 160px; text-align: left; padding: 12px; background: #1e293b; color: #94a3b8; border-bottom: 1px solid #334155; font-size: 0.9rem; }
+.input-table td { padding: 8px; border-bottom: 1px solid #334155; }
+.form-input { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 8px; color: #fff; border-radius: 4px; }
+.status-y { color: #3b82f6 !important; font-weight: bold; }
+.status-n { color: #ef4444 !important; font-weight: bold; }
