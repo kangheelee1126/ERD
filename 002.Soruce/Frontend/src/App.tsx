@@ -8,8 +8,9 @@ import MenuManagePage from './pages/System/MenuManagePage';
 import UserManagement from './pages/Admin/UserManagement';
 // ✨ 권한 관리 페이지 import 추가
 import RoleManagement from './pages/Admin/RoleManagement';
-
 import SamplePage from './pages/Sample/sample';       // [cite: 2026-01-28]
+// ✨ 신규 페이지 임포트 [cite: 2026-01-28]
+import CommonCode from './pages/System/CommonCode';
 
 
 function App() {
@@ -40,6 +41,9 @@ function App() {
 
         {/* 3. 표준 샘플 페이지 (TypeScript 경고 해결 지점) [cite: 2026-01-28] */}
         <Route path="/sample" element={<SamplePage />} />
+
+        {/* 3. 공통코드 관리 페이지 (System 메뉴) ✨ [cite: 2026-01-28] */}
+        <Route path="/system/CommonCode" element={<CommonCode />} />
 
       </Route>
 

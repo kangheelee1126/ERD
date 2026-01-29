@@ -1,0 +1,40 @@
+/* 기본 공통 스타일 상속 */
+.table-wrapper {
+    width: 100%;
+    background: #1e1e1e;
+    border-radius: 4px;
+  }
+  
+  .overflow-x-auto {
+    overflow-x: auto; /* 컬럼이 많을 경우 가로 스크롤 활성화 */
+  }
+  
+  /* [지침] 헤더 중앙 정렬 및 셀 실선 구분 [cite: 2026-01-28] */
+  .standard-table th {
+    background-color: #2d2d2d;
+    color: #aaa;
+    text-align: center !important;
+    border: 1px solid #444;
+    white-space: nowrap;
+  }
+  
+  .standard-table td {
+    border: 1px solid #444;
+  }
+  
+  /* [지침] 삭제 컬럼 60px 고정 [cite: 2026-01-29] */
+  .standard-table th:last-child,
+  .standard-table td:last-child {
+    width: 60px !important;
+    min-width: 60px !important;
+    text-align: center;
+  }
+  
+  .required-mark {
+    color: #ef4444;
+    margin-left: 4px;
+  }
+  
+  /* 상태별 색상 지침 [cite: 2026-01-28] */
+  .status-y { color: #3b82f6 !important; font-weight: bold; }
+  .status-n { color: #ef4444 !important; font-weight: bold; }

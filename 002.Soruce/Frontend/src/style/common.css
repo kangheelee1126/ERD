@@ -5,9 +5,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 16px;
+  padding-bottom: 12px; /* 패딩을 살짝 줄여 여백 최적화 */
   border-bottom: var(--border-style);
-  margin-bottom: 20px;
+  /* ✨ 수정: 페이지 컨테이너(헤더)와 filter-bar 사이 간격을 5px로 설정 */
+  margin-bottom: 5px; 
 }
 
 .header-title {
@@ -32,24 +33,26 @@
 .filter-bar {
   background-color: var(--bg-card);
   border: var(--border-style);
-  padding: 16px 20px;
+  padding: 10px 20px; /* 내부 수직 패딩을 조정하여 슬림하게 변경 */
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 15px; /* 컨텐츠 그리드와의 간격은 유지 */
 }
 
 .filter-group {
   display: flex;
-  gap: 24px;
+  /* ✨ 수정: filter-item 사이의 간격을 5px로 설정 */
+  gap: 5px; 
   align-items: center;
 }
 
 .filter-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  /* ✨ 추가 수정: 라벨과 입력 필드 사이도 촘촘하게(8px) 조정 */
+  gap: 8px; 
 }
 
 .filter-item label {

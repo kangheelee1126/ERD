@@ -5,12 +5,12 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 24px 30px; /* ✨ 지침: 사이드바 여백 반영 */
+  padding: 24px 30px; /* ✨ 지침 준수: 사이드바 여백 반영 */
   gap: var(--grid-gap);
   overflow: hidden;
 }
 
-/* --- 2. 가변 컨텐츠 그리드 (1~4분할) [cite: 2026-01-28] --- */
+/* --- 2. 가변 컨텐츠 그리드 시스템 (분할 제어) [cite: 2026-01-28] --- */
 .content-grid {
   display: grid;
   gap: var(--grid-gap);
@@ -20,14 +20,34 @@
 
 .layout-1 { grid-template-columns: 1fr; }
 .layout-2 { grid-template-columns: 1fr 1fr; }
-.layout-3 {
-  grid-template-areas: "top top" "left right";
-  grid-template-rows: auto 1fr;
+
+/* ✨ 수정: 3분할 - 우측 메인 1개, 좌측 서브 2개 (상하) [cite: 2026-01-28] */
+.layout-3-main-right {
+  grid-template-columns: 1fr 2.5fr; /* 좌측 서브 1 : 우측 메인 2.5 비율 */
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+    "sub1 main"
+    "sub2 main";
 }
+
+/* ✨ 추가: 3분할 - 좌측 메인 1개, 우측 서브 2개 (상하) [cite: 2026-01-28] */
+.layout-3-main-left {
+  grid-template-columns: 2.5fr 1fr; /* 좌측 메인 2.5 : 우측 서브 1 비율 */
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+    "main sub1"
+    "main sub2";
+}
+
 .layout-4 { 
   grid-template-columns: 1fr 1fr; 
   grid-template-rows: 1fr 1fr; 
 }
+
+/* 그리드 영역 이름 지정 [cite: 2026-01-28] */
+.area-main { grid-area: main; }
+.area-sub1 { grid-area: sub1; }
+.area-sub2 { grid-area: sub2; }
 
 /* --- 3. 표준 테이블 (지침: 헤더 중앙 정렬, 전 셀 실선) [cite: 2026-01-28] --- */
 .standard-table {
@@ -38,15 +58,15 @@
 
 .standard-table th {
   background-color: rgba(255, 255, 255, 0.05);
-  border: var(--border-style); /* ✨ 지침: 실선 구분 */
+  border: var(--border-style); /* ✨ 실선 구분 */
   padding: 12px;
   font-size: 0.85rem;
-  text-align: center;         /* ✨ 지침: 헤더 중앙 정렬 */
+  text-align: center;         /* ✨ 헤더 중앙 정렬 */
   color: var(--text-muted);
 }
 
 .standard-table td {
-  border: var(--border-style); /* ✨ 지침: 실선 구분 */
+  border: var(--border-style); /* ✨ 실선 구분 */
   padding: 10px;
   font-size: 0.85rem;
   color: var(--text-main);
@@ -54,7 +74,7 @@
 
 .standard-table td.center { text-align: center; }
 
-/* --- 4. 표준 폼 및 입력 요소 (지침: 좌라벨, 우입력 및 다크 테마) [cite: 2026-01-27, 2026-01-28] --- */
+/* --- 4. 표준 폼 및 입력 요소 (다크 테마) [cite: 2026-01-27, 2026-01-28] --- */
 .form-table {
   width: 100%;
   border-collapse: collapse;
@@ -75,23 +95,19 @@
   padding: 8px 12px;
 }
 
-/* ✨ [해결] 입력 필드 스타일 강제 적용 [cite: 2026-01-28] */
-input[type="text"],
-input[type="password"],
-select,
-textarea {
+input[type="text"], input[type="password"], select, textarea {
   width: 100%;
   padding: 8px 12px;
-  background-color: var(--bg-input); /* 다크 배경 [cite: 2026-01-28] */
-  border: var(--border-style);       /* 실선 테두리 [cite: 2026-01-28] */
-  color: var(--text-main);           /* 밝은 글자색 [cite: 2026-01-28] */
+  background-color: var(--bg-input); 
+  border: var(--border-style);       
+  color: var(--text-main);           
   border-radius: 4px;
   font-size: 0.85rem;
   outline: none;
 }
 
 input:focus, select:focus {
-  border-color: var(--primary-color); /* 포커스 시 파란색 [cite: 2026-01-28] */
+  border-color: var(--primary-color);
 }
 
 /* --- 5. 구획(Section) 디자인 --- */

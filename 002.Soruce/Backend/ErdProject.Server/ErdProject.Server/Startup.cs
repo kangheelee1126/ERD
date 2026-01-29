@@ -13,7 +13,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ErdProject.Server.Data;
-// NewtonsoftJson 사용을 위한 네임스페이스 (패키지 설치 후 활성화)
+// ✨ 서비스 레이어 참조를 위한 네임스페이스 추가
+using ErdProject.Server.Services;
+// NewtonsoftJson 사용을 위한 네임스페이스
 using Newtonsoft.Json;
 
 namespace ErdProject.Server
@@ -27,43 +29,54 @@ namespace ErdProject.Server
 
         public IConfiguration Configuration { get; }
 
-        // 이 메서드는 런타임에 의해 호출됩니다. 컨테이너에 서비스를 추가하는 데 사용합니다.
+        /// <summary>
+        /// 애플리케이션에서 사용할 서비스 부품들을 컨테이너에 등록합니다. (Dependency Injection)
+        /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
-            // 1. JSON 순환 참조 방지 설정 (계층형 메뉴 구조 전송 시 필수)
-            // .NET 5.0 패키지 설치 후 .AddNewtonsoftJson()을 연결합니다.
+            // 1. JSON 직렬화 설정 (NewtonsoftJson 활용)
+            // 메뉴의 트리 구조나 공통코드의 계층 데이터 전송 시 순환 참조 에러를 방지합니다.
             services.AddControllers()
                 .AddNewtonsoftJson(options =>
                 {
-                    // 부모-자식 간의 무한 순환 참조를 방지하여 트리 구조 데이터를 정상적으로 직렬화합니다.
+                    // 부모-자식 객체 간의 무한 루프 참조를 무시하여 정상적인 JSON을 생성합니다.
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    // 속성 이름을 카멜 케이스(camelCase)로 유지하고 싶다면 아래 설정을 추가할 수 있습니다.
-                    // options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
                 });
 
-            // 2. DB 연결 등록 (appsettings.json의 DefaultConnection 사용)
+            // 2. DB 연결 등록 (Entity Framework Core)
+            // appsettings.json에 정의된 'DefaultConnection' 문자열을 사용하여 SQL Server에 연결합니다.
             services.AddDbContext<ErdDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            // 3. CORS 설정 (React Vite 포트 5173 허용)
+            // 3. ✨ 비즈니스 로직 서비스 등록 (의존성 주입)
+            // 컨트롤러에서 ICommonCodeService를 요청할 때 CommonCodeService 인스턴스를 생성하여 제공합니다.
+            // Scoped는 HTTP 요청 한 번당 하나의 인스턴스를 유지합니다.
+            services.AddScoped<ICommonCodeService, CommonCodeService>();
+
+            // 4. CORS 설정 (프론트엔드 React Vite 환경 허용)
+            // 로컬 개발 환경의 Vite(5173) 포트에서 오는 API 요청을 허용합니다.
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowReact",
                     builder => builder.WithOrigins("http://localhost:5173")
                                       .AllowAnyMethod()
                                       .AllowAnyHeader()
-                                      .AllowCredentials()); // 쿠키나 인증 헤더 사용 시 필요
+                                      .AllowCredentials());
             });
 
+            // 5. Swagger API 문서화 설정
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ErdProject.Server", Version = "v1" });
             });
         }
 
-        // 이 메서드는 런타임에 의해 호출됩니다. HTTP 요청 파이프라인을 구성하는 데 사용합니다.
+        /// <summary>
+        /// HTTP 요청이 들어왔을 때 거쳐가는 통로(미들웨어 파이프라인)를 구성합니다.
+        /// </summary>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // 개발 환경에서의 설정 (예외 페이지, 스웨거 노출)
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -71,16 +84,19 @@ namespace ErdProject.Server
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ErdProject.Server v1"));
             }
 
-            // 개발 환경에서 HTTPS 인증서 문제가 번거롭다면 잠시 주석 처리 가능합니다.
-            app.UseHttpsRedirection();
+            // HTTPS 보안 연결 강제화 (필요 시 주석 해제)
+            // app.UseHttpsRedirection();
 
+            // 라우팅 활성화
             app.UseRouting();
 
-            // ✨ 중요: UseCors는 반드시 UseRouting과 UseEndpoints 사이에 위치해야 합니다.
+            // ✨ 중요: CORS 정책 적용 (반드시 UseRouting과 UseEndpoints 사이에 위치)
             app.UseCors("AllowReact");
 
+            // 인증 및 권한 부여 활성화
             app.UseAuthorization();
 
+            // API 엔드포인트 매핑
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

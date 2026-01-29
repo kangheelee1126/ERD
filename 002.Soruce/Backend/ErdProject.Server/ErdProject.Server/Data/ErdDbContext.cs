@@ -24,6 +24,17 @@ namespace ErdProject.Server.Data
         public DbSet<UserRole> UserRoles { get; set; } = null!;
 
 
+        // --- 공통코드 관련 테이블 ✨ 에러 해결을 위해 추가된 부분 ---
+
+        /// <summary> 공통코드 그룹 마스터 테이블 (COM_CODE_GRP_MST) </summary>
+        public DbSet<CodeGroup> CodeGroups { get; set; } = null!;
+
+        /// <summary> 공통코드 상세 내역 테이블 (COM_CODE_DTL_MST) </summary>
+        public DbSet<CodeDetail> CodeDetails { get; set; } = null!;
+
+        // 고객사 정보 관련 (추가된 부분)
+        public DbSet<Customer> Customers { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -34,6 +45,10 @@ namespace ErdProject.Server.Data
 
             // ✨ RoleMenu는 복합키이므로 프로그램 구동을 위해 이 설정이 반드시 필요합니다.
             modelBuilder.Entity<RoleMenu>().HasKey(rm => new { rm.RoleId, rm.MenuId });
+
+            // 3. 공통코드 상세 복합키 설정 (그룹코드 + 상세코드) ✨ 반드시 필요
+            modelBuilder.Entity<CodeDetail>()
+                .HasKey(cd => new { cd.CodeGrpCd, cd.CodeCd });
         }
     }
 }
