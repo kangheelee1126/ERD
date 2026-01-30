@@ -47,6 +47,8 @@ namespace ErdProject.Server
             services.AddScoped<IUserService, UserService>();  //사용자 정보 서비스
             // ✨ [추가] 담당자 서비스 등록
             services.AddScoped<IContactService, ContactService>();
+            // 사업장 관리
+            services.AddScoped<ICustSiteService, CustSiteService>();
 
             // 4. CORS 설정
             services.AddCors(options =>

@@ -38,6 +38,8 @@ namespace ErdProject.Server.Data
         // ✨ [추가] 담당자 테이블 등록
         public DbSet<ErdProject.Server.Models.Entities.Contact> Contacts { get; set; } = null!;
 
+        /// <summary> 사업장 마스터 테이블 (CUST_SITE_MST) </summary>
+        public DbSet<CustSite> CustSites { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
