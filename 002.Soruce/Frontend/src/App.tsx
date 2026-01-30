@@ -14,6 +14,7 @@ import CommonCode from './pages/System/CommonCode';
 
 import CustomerManagement from './pages/base/CustomerManagement'; // [cite: 2026-01-28]
 import ContactManagement from './pages/business/ContactManagement';
+import BusinessSiteService from './pages/business/BusinessManage';
 
 function App() {
   return (
@@ -52,6 +53,9 @@ function App() {
 
         {/* ✨ [추가] 영업/비즈니스 관리 */}
         <Route path="/business/contact" element={<ContactManagement />} />
+
+        <Route path="/business/manage" element={<BusinessSiteService />} />
+
       </Route>
 
       {/* 3. 예외 처리 */}
