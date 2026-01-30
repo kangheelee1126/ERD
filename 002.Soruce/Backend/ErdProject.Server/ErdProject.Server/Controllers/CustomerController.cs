@@ -28,6 +28,14 @@ namespace ErdProject.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomerDto>> GetCustomer(long id)
+        {
+            var customer = await _customerService.GetCustomerAsync(id);
+            if (customer == null) return NotFound();
+            return Ok(customer);
+        }
+
         [HttpPost("save")]
         public async Task<IActionResult> SaveCustomers([FromBody] List<CustomerDto> dtos)
         {

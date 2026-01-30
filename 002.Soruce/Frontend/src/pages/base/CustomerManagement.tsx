@@ -102,8 +102,22 @@ const CustomerManagement: React.FC = () => {
     setPage(1); // 사이즈 변경 시 1페이지로 리셋
   };
 
-  const openModal = (target: Customer | null = null) => {
-    setCust(target ? { ...target } : { ...initialCust });
+  const openModal = async (id: number = 0) => {
+    if (id > 0) {
+      // [수정 모드] 서버에서 최신 데이터 조회
+      try {
+        const data = await CustomerService.getCustomer(id);
+        setCust(data); // 조회된 데이터로 폼 채우기
+      } catch (error) {
+        console.error("상세 조회 실패:", error);
+        alert("데이터를 불러오지 못했습니다.");
+        return; // 창 띄우지 않음
+      }
+    } else {
+      // [신규 모드] 초기화
+      setCust({ ...initialCust });
+    }
+    
     setShowModal(true);
   };
 
@@ -217,8 +231,8 @@ const CustomerManagement: React.FC = () => {
                     <span className={c.useYn === 'Y' ? 'status-blue' : 'status-red'}>{c.useYn === 'Y' ? '사용' : '미사용'}</span>
                   </td>
                   <td className="cm-td center">
-                    <button className="cm-btn edit" onClick={() => openModal(c)}>
-                      <Edit size={14} /> 수정
+                    <button className="cm-btn edit" onClick={() => openModal(c.customerId)}>
+                    <Edit size={14} /> 수정
                     </button>
                   </td>
                   <td className="cm-td center">

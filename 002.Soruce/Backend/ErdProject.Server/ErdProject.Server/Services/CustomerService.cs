@@ -115,5 +115,38 @@ namespace ErdProject.Server.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<CustomerDto?> GetCustomerAsync(long id)
+        {
+            var c = await _context.Customers.FindAsync(id);
+            if (c == null) return null;
+
+            // Entity -> DTO 변환
+            return new CustomerDto
+            {
+                CustomerId = c.CustomerId,
+                CustCd = c.CustCd,
+                CustNm = c.CustNm,
+                CustNmEn = c.CustNmEn,
+                CustTypeCd = c.CustTypeCd,
+                IndustryCd = c.IndustryCd,
+                MfgTypeCd = c.MfgTypeCd,
+                DevCapabilityCd = c.DevCapabilityCd,
+                SourceModYn = c.SourceModYn,
+                BizNo = c.BizNo,
+                TelNo = c.TelNo,
+                ZipCd = c.ZipCd,
+                Addr1 = c.Addr1,
+                Addr2 = c.Addr2,
+                TimezoneCd = c.TimezoneCd,
+                Comments = c.Comments,
+                SortNo = c.SortNo,
+                UseYn = c.UseYn,
+                RegDt = c.CreatedDt,
+                CreatedBy = c.CreatedBy,
+                ModDt = c.UpdatedDt,
+                UpdatedBy = c.UpdatedBy
+            };
+        }
     }
 }

@@ -55,6 +55,12 @@ export const CustomerService = {
     return response.data; // 이제 items만 오는 게 아니라 PagedResult 객체가 반환됩니다.
   },
 
+  // ✨ [추가] 단건 상세 조회
+  getCustomer: async (id: number) => {
+    const response = await api.get<Customer>(`/system/customer/${id}`);
+    return response.data;
+  },
+  
   // 2. 고객사 저장
   saveCustomer: async (customer: Customer) => {
     const response = await api.post('/system/customer/save', [customer]);
