@@ -1,0 +1,278 @@
+/* =========================================
+   src/style/common-layout.css
+   (통합 표준 레이아웃 - Dark Mode)
+   ========================================= */
+
+/* 1. 기본 변수 (테마 색상) */
+:root {
+    --primary-color: #3b82f6;       /* 메인 블루 (활성/강조) */
+    --primary-hover: #2563eb;       /* 호버 시 블루 */
+    --danger-color: #ef4444;        /* 삭제/위험 레드 */
+    --danger-bg: rgba(239, 68, 68, 0.15); /* 삭제 버튼 배경 */
+    
+    --bg-page: #0f172a;             /* 전체 페이지 배경 (Deep Dark) */
+    --bg-panel: #1e293b;            /* 패널/그리드 배경 */
+    --border-color: #334155;        /* 테두리 색상 */
+    
+    --text-primary: #f8fafc;        /* 기본 텍스트 (흰색) */
+    --text-secondary: #94a3b8;      /* 보조 텍스트 (회색) */
+    --input-bg: #334155;            /* 입력 필드 배경 */
+}
+
+/* 2. 전체 페이지 컨테이너 */
+.page-container {
+    /* ✨ [핵심] 헤더 높이(약 60px)를 뺀 나머지를 꽉 채움 */
+    height: calc(100vh - 60px);
+    padding: 20px;
+    
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 이중 스크롤 방지 */
+    
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    box-sizing: border-box;
+}
+
+/* 3. 페이지 헤더 (아이콘 + 제목) */
+.page-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0; /* 높이 고정 */
+}
+.header-title {
+    font-size: 1.4rem; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--text-primary);
+}
+
+/* 4. 검색 필터바 (Filter Bar) */
+.filter-bar {
+    display: flex;
+    align-items: center;        /* 세로 중앙 정렬 */
+    gap: 20px;                  /* 아이템 간 간격 */
+    
+    background-color: var(--bg-panel);
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 15px;
+    flex-shrink: 0;             /* 높이 고정 */
+}
+
+/* 필터 아이템 (라벨 + 입력창 가로 배치) */
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.filter-item label {
+    font-size: 0.9rem; font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap; margin: 0;
+}
+.filter-input {
+    height: 32px; padding: 0 10px;
+    background-color: var(--input-bg);
+    border: 1px solid #475569; border-radius: 4px;
+    color: var(--text-primary); outline: none;
+    font-size: 0.9rem;
+}
+.filter-input:focus { border-color: var(--primary-color); }
+.filter-input[readonly] { background-color: #1e293b; color: #64748b; cursor: default; }
+
+/* ✨ 조회 버튼 (오른쪽 끝으로 밀기) */
+.filter-bar .btn-search {
+    margin-left: auto;
+}
+
+/* 5. 레이아웃 분할 유틸리티 (Split Wrapper) */
+.layout-wrapper {
+    flex: 1;                /* 남은 공간 전체 차지 */
+    display: flex;
+    gap: 15px;              /* 분할 영역 사이 간격 */
+    overflow: hidden;       /* 내부 스크롤 제어 */
+    min-height: 0;          /* Flexbox 버그 방지 */
+}
+.layout-wrapper.row { flex-direction: row; }    /* 좌우 분할 */
+.layout-wrapper.col { flex-direction: column; } /* 상하 분할 */
+
+/* 6. 컨텐츠 바디 (그리드 영역) */
+.content-body.section {
+    flex: 1;                /* ✨ 남은 높이 100% 차지 */
+    display: flex;
+    flex-direction: column;
+    
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.part-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 15px; flex-shrink: 0;
+}
+.part-title { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+.header-left, .header-right { display: flex; align-items: center; gap: 8px; }
+
+.part-body {
+    flex: 1;                /* ✨ 내부에서도 남은 공간 차지 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 테이블은 위, 페이징은 아래 */
+    overflow: auto;         /* ✨ 데이터 많을 때만 스크롤 생성 */
+}
+
+/* 7. 표준 테이블 (Standard Table) */
+.standard-table, .cust-mgmt-table {
+    width: 100%; table-layout: fixed; /* 컬럼 폭 고정 */
+    border-collapse: collapse; border: 1px solid var(--border-color);
+}
+.standard-table th, .cm-th {
+    background-color: var(--bg-panel); color: var(--text-secondary);
+    padding: 10px 8px; border: 1px solid var(--border-color);
+    text-align: center; white-space: nowrap; font-size: 0.9rem;
+    position: sticky; top: 0; z-index: 10; /* 헤더 고정 */
+}
+.standard-table td, .cm-td {
+    padding: 8px 10px; border: 1px solid var(--border-color);
+    color: var(--text-primary); font-size: 0.9rem;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+/* 정렬 유틸 */
+.center { text-align: center !important; }
+.left { text-align: left !important; padding-left: 10px; }
+.right { text-align: right !important; padding-right: 10px; }
+.highlight-text { color: var(--primary-color); font-weight: 600; }
+.status-blue { color: var(--primary-color); font-weight: bold; }
+.status-red { color: var(--danger-color); font-weight: bold; }
+
+/* 8. 버튼 스타일 (Buttons) */
+button { border: none; outline: none; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
+
+.btn-search {
+    height: 32px; padding: 0 20px;
+    background-color: #334155; border: 1px solid #475569; color: white;
+    display: flex; align-items: center; gap: 6px; font-size: 0.9rem;
+}
+.btn-search:hover { background-color: #475569; }
+
+.btn-primary {
+    height: 32px; padding: 0 15px;
+    background-color: var(--primary-color); color: white;
+    display: flex; align-items: center; gap: 5px; font-size: 0.9rem;
+}
+.btn-primary:hover { background-color: var(--primary-hover); }
+
+.btn-secondary {
+    height: 32px; padding: 0 15px;
+    background-color: #334155; border: 1px solid #475569; color: white;
+    display: flex; align-items: center; gap: 5px; font-size: 0.9rem;
+}
+.btn-secondary:hover { background-color: #475569; }
+
+/* 그리드 내부 액션 버튼 */
+.cm-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 28px; padding: 0 8px; gap: 4px; width: auto;
+    background: #334155; border: 1px solid #475569; color: white;
+    font-size: 0.85rem;
+}
+.cm-btn.edit:hover { background: var(--primary-color); border-color: var(--primary-color); }
+.cm-btn.delete { color: #fca5a5 !important; border-color: var(--danger-color) !important; background: var(--danger-bg) !important; }
+.cm-btn.delete:hover { background: var(--danger-color) !important; color: white !important; }
+
+/* 9. 페이징 & 컨트롤 */
+.pagination-container { display: flex; justify-content: center; margin-top: 15px; gap: 5px; flex-shrink: 0; }
+/* 9. 페이징 & 컨트롤 수정 */
+/* 9. 페이징 & 컨트롤 수정 */
+.paging-btn {
+    width: 32px;
+    height: 32px;
+    background: #334155;
+    border: 1px solid #475569;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 5px 8px;
+}
+
+/* ✨ Lucide React SVG 아이콘 강제 스타일 적용 */
+.paging-btn svg {
+    stroke: white !important;
+    fill: none !important;
+    stroke-width: 2 !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.paging-btn:hover:not(:disabled) { 
+    background: #475569; 
+}
+
+.paging-btn.active { 
+    background: var(--primary-color); 
+    border-color: var(--primary-color); 
+    font-weight: bold; 
+}
+
+.paging-btn:disabled { 
+    opacity: 0.5; 
+    cursor: not-allowed; 
+}
+
+/* ✨ 비활성화 상태 아이콘 색상 */
+.paging-btn:disabled svg {
+    stroke: #64748b !important;
+}
+
+/* ✨ 콤보박스 (자동 폭 조절) */
+.page-select {
+    height: 32px; padding: 0 10px; width: auto;
+    background: #334155; border: 1px solid #475569; color: white;
+    border-radius: 4px; outline: none; cursor: pointer;
+}
+
+/* 10. 팝업 모달 (Modal) */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); z-index: 1000;
+    display: flex; justify-content: center; align-items: center;
+}
+.modal-content {
+    background: var(--bg-panel); border: 1px solid var(--border-color);
+    border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; color: var(--text-primary);
+}
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 20px; border-bottom: 1px solid var(--border-color);
+    background-color: #1e293b;
+}
+.modal-header h3 { margin: 0; font-size: 1.25rem; font-weight: 700; }
+.modal-close-btn { background: none; color: #94a3b8; padding: 4px; display: flex; }
+.modal-close-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+.modal-body { padding: 20px; overflow-y: auto; }
+
+/* 입력 폼 테이블 */
+.input-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+.input-table th { text-align: left; width: 120px; font-weight: 600; color: var(--text-secondary); vertical-align: middle; }
+.input-table td { vertical-align: middle; }
+.form-input { 
+    width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px;
+    background: var(--input-bg); border: 1px solid #475569; color: white; border-radius: 4px;
+}
+.btn-group {
+    padding: 15px 20px; border-top: 1px solid var(--border-color);
+    display: flex; justify-content: flex-end; background-color: #1e293b;
+}
+.btn-action-group { display: flex; gap: 10px; }
+.req { color: var(--danger-color); margin-left: 4px; }

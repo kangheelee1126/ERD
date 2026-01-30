@@ -13,7 +13,7 @@ import SamplePage from './pages/Sample/sample';       // [cite: 2026-01-28]
 import CommonCode from './pages/System/CommonCode';
 
 import CustomerManagement from './pages/base/CustomerManagement'; // [cite: 2026-01-28]
-
+import ContactManagement from './pages/business/ContactManagement';
 
 function App() {
   return (
@@ -49,6 +49,9 @@ function App() {
 
         {/* ✨ [추가] 기준정보 관리 라우트 [cite: 2026-01-28] */}
         <Route path="/base/customer" element={<CustomerManagement />} />
+
+        {/* ✨ [추가] 영업/비즈니스 관리 */}
+        <Route path="/business/contact" element={<ContactManagement />} />
       </Route>
 
       {/* 3. 예외 처리 */}

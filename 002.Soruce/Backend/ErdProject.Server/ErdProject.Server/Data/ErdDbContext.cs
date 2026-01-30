@@ -35,6 +35,10 @@ namespace ErdProject.Server.Data
         // 고객사 정보 관련 (추가된 부분)
         public DbSet<Customer> Customers { get; set; } = null!;
 
+        // ✨ [추가] 담당자 테이블 등록
+        public DbSet<ErdProject.Server.Models.Entities.Contact> Contacts { get; set; } = null!;
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

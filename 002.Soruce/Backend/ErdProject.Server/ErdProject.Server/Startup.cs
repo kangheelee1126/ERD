@@ -45,6 +45,8 @@ namespace ErdProject.Server
             // ✨ [추가됨] 고객사 서비스 등록 (500 에러 해결)
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IUserService, UserService>();  //사용자 정보 서비스
+            // ✨ [추가] 담당자 서비스 등록
+            services.AddScoped<IContactService, ContactService>();
 
             // 4. CORS 설정
             services.AddCors(options =>
