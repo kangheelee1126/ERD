@@ -3,7 +3,7 @@ import { Users, Plus, Save, X, Trash2, Edit, ShieldCheck } from 'lucide-react';
 import { UserService } from '../../services/UserService';
 import { RoleService } from '../../services/RoleService';
 import { UserRoleService } from '../../services/UserRoleService';
-import './UserManagement.css';
+import './UserManagement.css'; // 전용 스타일 파일
 
 const UserManagement = () => {
     const [users, setUsers] = useState<any[]>([]);
@@ -30,7 +30,7 @@ const UserManagement = () => {
 
     useEffect(() => { loadData(); }, []);
 
-    // ✨ 신규/수정 기본 정보 모달 열기 [cite: 2026-01-28]
+    // 모달 관련 함수들은 그대로 유지 (생략 가능하나 전체 흐름 위해 유지)
     const openModal = (targetUser: any = null) => {
         if (targetUser) {
             setUser({ ...targetUser, password: '' });
@@ -40,7 +40,6 @@ const UserManagement = () => {
         setShowModal(true);
     };
 
-    // ✨ 권한 설정 전용 모달 [cite: 2026-01-28]
     const openRoleModal = async (targetUser: any) => {
         setUser(targetUser);
         try {
@@ -95,69 +94,51 @@ const UserManagement = () => {
             </header>
             
             <div className="table-container">
-                <table className="standard-table">
+                {/* ✨ [핵심 변경] 고유 클래스 'user-mgmt-table' 사용 */}
+                <table className="user-mgmt-table">
                     <thead>
-                        {/* 헤더 중앙 정렬 및 실선 가이드 [cite: 2026-01-28] */}
                         <tr>
-                            <th className="text-center" style={{ width: '60px' }}>No</th>
+                            <th className="um-th center" style={{ width: '60px' }}>No</th>
+                            <th className="um-th left" style={{ width: '120px' }}>아이디</th>
+                            <th className="um-th center" style={{ width: '200px' }}>이름</th>
+                            <th className="um-th center">이메일</th>
+                            <th className="um-th center" style={{ width: '100px' }}>사용여부</th>
+                            <th className="um-th center" style={{ width: '200px' }}>등록일</th>
                             
-                            {/* ✨ 아이디: 폭 120px, 왼쪽 정렬 */}
-                            <th className="text-left" style={{ width: '120px' }}>아이디</th>
-                            
-                            {/* ✨ 이름: 폭 200px, 가운데 정렬 */}
-                            <th className="text-center" style={{ width: '200px' }}>이름</th>
-                            
-                            <th className="text-center">이메일</th>
-                            <th className="text-center" style={{ width: '100px' }}>사용여부</th>
-                            
-                            {/* ✨ 등록일: 폭 200px, 가운데 정렬 */}
-                            <th className="text-center" style={{ width: '200px' }}>등록일</th>
-                            
-                            {/* ✨ 권한: 폭 100px, 가운데 정렬 */}
-                            <th className="text-center" style={{ width: '100px' }}>권한</th>
-                            
-                            {/* ✨ 수정: 폭 80px, 가운데 정렬 */}
-                            <th className="text-center" style={{ width: '80px' }}>수정</th>
-                            
-                            {/* ✨ 삭제: 폭 80px, 가운데 정렬 */}
-                            <th className="text-center" style={{ width: '80px' }}>삭제</th>
+                            {/* 버튼 컬럼 */}
+                            <th className="um-th center" style={{ width: '100px' }}>권한</th>
+                            <th className="um-th center" style={{ width: '80px' }}>수정</th>
+                            <th className="um-th center" style={{ width: '80px' }}>삭제</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((u, idx) => (
                             <tr key={u.userNo}>
-                                <td className="text-center">{idx + 1}</td>
-                                
-                                {/* 아이디: 왼쪽 정렬 적용 */}
-                                <td className="text-left highlight-id">{u.userId}</td>
-                                
-                                {/* 이름: 가운데 정렬 적용 */}
-                                <td className="text-center">{u.userName}</td>
-                                
-                                <td>{u.email || '-'}</td>
-                                <td className="text-center">
+                                <td className="um-td center">{idx + 1}</td>
+                                <td className="um-td left highlight-id">{u.userId}</td>
+                                <td className="um-td center">{u.userName}</td>
+                                <td className="um-td left">{u.email || '-'}</td>
+                                <td className="um-td center">
                                     <span className={u.useYn === 'Y' ? 'status-blue' : 'status-red'}>
                                         {u.useYn === 'Y' ? '사용' : '미사용'}
                                     </span>
                                 </td>
-                                
-                                {/* 등록일: 가운데 정렬 */}
-                                <td className="text-center">{formatDate(u.regDt)}</td>
+                                <td className="um-td center">{formatDate(u.regDt)}</td>
 
-                                {/* 버튼들: 중앙 정렬 */}
-                                <td className="text-center">
-                                    <button className="btn-table-edit center-btn" onClick={() => openRoleModal(u)}>
+                                <td className="um-td center">
+                                    {/* 고유 버튼 클래스 사용 */}
+                                    <button className="um-btn edit" onClick={() => openRoleModal(u)}>
                                         <ShieldCheck size={14} /> 권한설정
                                     </button>
                                 </td>
-                                <td className="text-center">
-                                    <button className="btn-table-edit center-btn" onClick={() => openModal(u)}>
+                                <td className="um-td center">
+                                    <button className="um-btn edit" onClick={() => openModal(u)}>
                                         <Edit size={14} /> 수정
                                     </button>
                                 </td>
-                                <td className="text-center">
-                                    {/* 삭제 버튼: 빨간색 스타일 클래스(btn-table-delete) 사용 */}
-                                    <button className="btn-table-delete center-btn" onClick={() => handleDelete(u.userNo)}>
+                                <td className="um-td center">
+                                    {/* 고유 삭제 버튼 클래스 */}
+                                    <button className="um-btn delete" onClick={() => handleDelete(u.userNo)}>
                                         <Trash2 size={14} /> 삭제
                                     </button>
                                 </td>
@@ -167,7 +148,7 @@ const UserManagement = () => {
                 </table>
             </div>
 
-            {/* 사용자 정보 모달 (라벨-입력 테이블 구조) */}
+            {/* 모달은 기존 구조 유지하되 충돌 방지 위해 필요한 경우 클래스 변경 가능 */}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content" style={{ width: '520px' }}>
@@ -208,7 +189,6 @@ const UserManagement = () => {
                 </div>
             )}
 
-            {/* 권한 설정 모달 */}
             {showRoleModal && (
                 <div className="modal-overlay">
                     <div className="modal-content" style={{ width: '500px' }}>

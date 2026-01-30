@@ -1,88 +1,93 @@
-/* [지침] 헤더 중앙 정렬 및 셀 실선 구분 [cite: 2026-01-28] */
-.standard-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #1e1e1e;
+@import "./../../style/variables.css";
+
+/* ✨ [고유 클래스] 사용자 관리 테이블 전용 스타일 
+  - 기존 standard-table 등의 간섭을 피함
+  - table-layout: fixed를 적용하여 컬럼 폭 강제
+*/
+.user-mgmt-table {
+    width: 100%;
+    table-layout: fixed; /* 이게 있어야 폭 조절 가능 */
+    border-collapse: collapse;
+    background-color: var(--bg-card, #1e293b);
+    border: 1px solid var(--border-color, #334155);
 }
 
-/* 기본 헤더 스타일 */
-.standard-table th {
-  background-color: #2d2d2d;
-  color: #aaa;
-  text-align: center !important; /* 기본 중앙 정렬 */
-  border: 1px solid #444;
-  padding: 12px 6px;
+/* 헤더 전용 클래스 (um-th) */
+.user-mgmt-table th.um-th {
+    background-color: #2d2d2d;
+    color: var(--text-muted, #94a3b8);
+    padding: 12px 6px;
+    border: 1px solid var(--border-color, #334155);
+    font-size: 0.9rem;
+    
+    /* 텍스트 넘침 방지 */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-.standard-table td {
-  border: 1px solid #444;
-  padding: 8px 6px;
-  color: #eee;
+/* 데이터 셀 전용 클래스 (um-td) */
+.user-mgmt-table td.um-td {
+    padding: 8px 6px;
+    border: 1px solid var(--border-color, #334155);
+    color: var(--text-main, #f8fafc);
+    font-size: 0.9rem;
+    
+    /* 텍스트 넘침 방지 */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-/* ✨ [추가] 정렬 유틸리티 클래스 */
-.text-left {
-  text-align: left !important;
-  padding-left: 12px !important; /* 왼쪽 정렬 시 가독성을 위한 패딩 */
+/* 정렬 유틸리티 (이 파일 내부에서만 동작하도록 한정 가능) */
+.um-th.center, .um-td.center { text-align: center !important; }
+.um-th.left,   .um-td.left   { text-align: left !important; padding-left: 12px !important; }
+
+/* ✨ [버튼 고유 클래스] um-btn 
+  - 중앙 정렬 및 공통 스타일
+*/
+.um-btn {
+    display: flex; /* inline-flex 대신 flex로 하고 margin auto 사용 */
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 0 auto; /* 셀 내부 중앙 정렬 */
+    padding: 5px 8px;
+    border-radius: 4px;
+    border: 1px solid #475569;
+    background: #334155;
+    color: #f8fafc;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
 }
 
-.text-center {
-  text-align: center !important;
+/* 수정/권한 버튼 스타일 */
+.um-btn.edit:hover {
+    background: var(--primary-color, #3b82f6);
+    border-color: var(--primary-color, #3b82f6);
 }
 
-/* 버튼 단독 배치 시 중앙 정렬을 위한 클래스 */
-.center-btn {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
+/* ✨ 삭제 버튼 스타일 (빨간색 강제) */
+.um-btn.delete {
+    color: #fca5a5 !important; 
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.15) !important;
 }
 
-.btn-table-edit, .btn-table-delete {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 5px 8px;
-  border-radius: 4px;
-  border: 1px solid #475569;
-  background: #334155;
-  color: #f8fafc;
-  font-size: 13px;
-  cursor: pointer;
-  white-space: nowrap;
+.um-btn.delete:hover {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
 }
 
-.btn-table-edit:hover { background: #3b82f6; border-color: #3b82f6; }
-
-/* ✨ [수정] 삭제 버튼: 기본 상태에서도 붉은 톤 적용하여 강조 */
-.btn-table-delete {
-  color: #fca5a5; /* 연한 빨강 텍스트 */
-  border-color: #ef4444;
-  background: rgba(239, 68, 68, 0.15); /* 투명도 있는 빨강 배경 */
-}
-
-.btn-table-delete:hover { 
-  background: #ef4444; 
-  border-color: #ef4444; 
-  color: #ffffff;
-}
-
-/* [지침] 팝업 레이아웃 (좌측 라벨, 우측 입력 필드) [cite: 2026-01-28] */
+/* 기존 모달 스타일 유지 (필요 시 이것도 이름 변경 가능하나, 공통 요소라 유지 추천) */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-.modal-content { background: #1e293b; width: 550px; padding: 25px; border-radius: 8px; border: 1px solid #334155; }
-
+.modal-content { background: #1e293b; padding: 25px; border-radius: 8px; border: 1px solid #334155; }
 .input-table { width: 100%; border-collapse: collapse; }
-.input-table th { 
-  width: 130px; 
-  text-align: left; 
-  color: #94a3b8; 
-  padding: 12px 10px; 
-  border-bottom: 1px solid #334155; 
-  background-color: #1e293b;
-}
+.input-table th { width: 130px; text-align: left; color: #94a3b8; padding: 12px 10px; border-bottom: 1px solid #334155; background-color: #1e293b; }
 .input-table td { padding: 8px 10px; border-bottom: 1px solid #334155; }
-.form-input { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 8px; color: #fff; border-radius: 4px; }
-
-.required-mark { color: #ef4444; margin-left: 4px; }
-.center { text-align: center !important; }
-.status-y { color: #3b82f6 !important; font-weight: bold; }
-.status-n { color: #ef4444 !important; font-weight: bold; }
+.form-input { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 8px; color: #f8fafc; border-radius: 4px; }
+.status-blue { color: #3b82f6; font-weight: bold; }
+.status-red { color: #ef4444; font-weight: bold; }

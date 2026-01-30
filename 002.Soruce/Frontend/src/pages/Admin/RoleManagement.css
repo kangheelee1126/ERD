@@ -1,61 +1,110 @@
-/* --- 공통 레이아웃 [cite: 2026-01-28] --- */
+/* --- 공통 레이아웃 --- */
 .page-container { padding: 20px; display: flex; flex-direction: column; gap: 15px; color: #e2e8f0; }
 .page-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #334155; }
 .page-title { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
 
-/* --- 테이블 실선 및 중앙 정렬 가이드 [cite: 2026-01-28] --- */
-.standard-table { width: 100%; border-collapse: collapse; border: 1px solid #334155; }
-.standard-table th { background-color: #1e293b; color: #94a3b8; padding: 12px; text-align: center; border: 1px solid #334155; font-size: 0.9rem; }
-.standard-table td { padding: 12px; border: 1px solid #334155; color: #cbd5e1; }
-.text-center { text-align: center; }
+/* ✨ [고유 클래스] 권한 관리 테이블 전용 스타일 */
+.role-mgmt-table {
+    width: 100%;
+    table-layout: fixed !important; /* 컬럼 폭 강제 적용 */
+    border-collapse: collapse;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+}
 
-/* ✨ 관리 컬럼 너비 최적화: 버튼 3개 대응 [cite: 2026-01-28] */
-.col-manage { width: 280px; min-width: 280px; }
-.btn-table-group { display: flex; justify-content: center; gap: 8px; }
+/* 헤더 전용 (rm-th) */
+.role-mgmt-table th.rm-th {
+    background-color: #1e293b;
+    color: #94a3b8;
+    padding: 12px 6px;
+    border: 1px solid #334155;
+    font-size: 0.9rem;
+    
+    /* 텍스트 넘침 방지 */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
-/* --- 상태 및 하이라이트 [cite: 2026-01-28] --- */
+/* 데이터 셀 전용 (rm-td) */
+.role-mgmt-table td.rm-td {
+    padding: 8px 6px;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    
+    /* 텍스트 넘침 방지 */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* 정렬 유틸리티 */
+.rm-th.center, .rm-td.center { text-align: center !important; }
+.rm-th.left,   .rm-td.left   { text-align: left !important; padding-left: 12px !important; }
+
+/* 상태 및 하이라이트 */
 .status-blue { color: #3b82f6; font-weight: 700; }
 .status-red { color: #ef4444; font-weight: 700; }
 .highlight-text { color: #3b82f6; font-weight: 600; }
 
-/* --- 버튼 스타일 (아이콘 포함) [cite: 2026-01-28] --- */
+/* ✨ [버튼 고유 클래스] rm-btn */
+.rm-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 0 auto; /* 셀 내부 중앙 정렬 */
+    padding: 5px 8px;
+    border-radius: 4px;
+    border: 1px solid #475569;
+    background: #334155;
+    color: #f8fafc;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+/* 수정/메뉴설정 버튼 스타일 */
+.rm-btn.edit:hover {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+/* ✨ 삭제 버튼 스타일 (빨간색 강제 적용) */
+.rm-btn.delete {
+    color: #fca5a5 !important; 
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+.rm-btn.delete:hover {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+}
+
+/* 상단 신규등록 버튼 */
 .btn-primary { background-color: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; }
 .btn-secondary { background-color: #334155; color: #f8fafc; border: 1px solid #475569; padding: 8px 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
-.btn-table-edit, .btn-table-delete { 
-    background-color: #334155; color: #f8fafc; border: 1px solid #475569; 
-    padding: 6px 12px; border-radius: 4px; cursor: pointer; 
-    display: flex; align-items: center; gap: 4px; font-size: 0.85rem; 
-    transition: all 0.2s ease;
-}
-.btn-table-edit:hover { background-color: #475569; border-color: #3b82f6; }
-.btn-table-delete:hover { background-color: #ef4444; border-color: #ef4444; }
-
-/* --- 모달 위치 및 테이블 구조 [cite: 2026-01-28] --- */
+/* --- 모달 위치 및 테이블 구조 (기존 유지) --- */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.85); display: flex; justify-content: center; align-items: center; z-index: 10000; }
-.modal-content { background-color: #1e293b; width: 520px; padding: 25px; border-radius: 8px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+.modal-content { background-color: #1e293b; padding: 25px; border-radius: 8px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
 .modal-header { margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
 .modal-header h3 { margin: 0; font-size: 1.2rem; color: #f8fafc; }
 
-/* ✨ 모달 내 좌측 라벨, 우측 입력 테이블 구조 가이드 준수 [cite: 2026-01-28] */
+/* 입력 폼 테이블 스타일 */
 .input-table { width: 100%; border-collapse: collapse; }
-.input-table th { 
-    width: 120px; text-align: left; color: #94a3b8; padding: 12px 10px; 
-    font-size: 0.9rem; border-bottom: 1px solid #334155; background-color: #1e293b; 
-}
+.input-table th { width: 120px; text-align: left; color: #94a3b8; padding: 12px 10px; font-size: 0.9rem; border-bottom: 1px solid #334155; background-color: #1e293b; }
 .input-table td { padding: 8px 10px; border-bottom: 1px solid #334155; }
-
-.form-input { 
-    width: 100%; background-color: #0f172a; border: 1px solid #334155; 
-    padding: 10px; color: #fff; border-radius: 4px; box-sizing: border-box; 
-}
+.form-input { width: 100%; background-color: #0f172a; border: 1px solid #334155; padding: 10px; color: #fff; border-radius: 4px; box-sizing: border-box; }
 .form-input:focus { border-color: #3b82f6; outline: none; }
 
-/* --- 버튼 그룹 우측 정렬 [cite: 2026-01-28] --- */
+/* 버튼 그룹 */
 .btn-group { display: flex; justify-content: flex-end; width: 100%; margin-top: 24px; padding-top: 16px; border-top: 1px solid #334155; }
 .btn-action-group { display: flex; gap: 10px; }
-
-/* 스크롤 영역 (매핑 모달용) */
-.modal-body { max-height: 450px; overflow-y: auto; padding-right: 5px; }
+.modal-body { overflow-y: auto; padding-right: 5px; }
 .modal-body::-webkit-scrollbar { width: 6px; }
 .modal-body::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 3px; }
