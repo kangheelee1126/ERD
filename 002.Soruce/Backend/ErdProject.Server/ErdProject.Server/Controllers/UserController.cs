@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ErdProject.Server.Data;
-using ErdProject.Server.Models;
-using System;
+using ErdProject.Server.Services;
+using ErdProject.Server.Models.Dtos;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ErdProject.Server.Controllers
@@ -13,78 +10,50 @@ namespace ErdProject.Server.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly ErdDbContext _context;
+        private readonly IUserService _userService;
 
-        public UserController(ErdDbContext context)
+        // ✨ 생성자 주입: DbContext 대신 Service를 받습니다.
+        public UserController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserAccount>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            return await _context.Users
-                .AsNoTracking()
-                .OrderByDescending(u => u.UserNo)
-                .ToListAsync();
+            var users = await _userService.GetUsersAsync();
+            return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserAccount>> GetUser(int id)
+        public async Task<ActionResult<UserDto>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            var user = await _userService.GetUserAsync(id);
+            if (user == null) return NotFound();
+            return Ok(user);
         }
 
         [HttpPost("save")]
-        public async Task<IActionResult> SaveUser([FromBody] UserAccount user)
+        public async Task<IActionResult> SaveUser([FromBody] UserDto userDto)
         {
-            try
-            {
-                if (user.UserNo == 0)
-                {
-                    user.RegDt = DateTime.Now;
-                    _context.Users.Add(user);
-                }
-                else
-                {
-                    var exists = await _context.Users.AnyAsync(u => u.UserNo == user.UserNo);
-                    if (!exists) return NotFound();
+            // DTO를 통해 받으므로 불필요한 필드 노출을 막습니다.
+            var result = await _userService.SaveUserAsync(userDto);
 
-                    _context.Users.Update(user);
-                }
-
-                await _context.SaveChangesAsync();
+            if (result)
                 return Ok(new { success = true, message = "Saved successfully." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
+            else
+                return BadRequest(new { success = false, message = "Failed to save user." });
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            try
-            {
-                var user = await _context.Users.FindAsync(id);
-                if (user == null) return NotFound();
+            var result = await _userService.DeleteUserAsync(id);
 
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+            if (result)
                 return Ok(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
+            else
+                return NotFound(new { success = false, message = "User not found or failed to delete." });
         }
     }
 }

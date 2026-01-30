@@ -19,9 +19,12 @@ namespace ErdProject.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CustomerDto>>> GetCustomers([FromQuery] string? keyword)
+        public async Task<ActionResult<PagedResult<CustomerDto>>> GetCustomers(
+            [FromQuery] int page = 1,
+            [FromQuery] int size = 10,
+            [FromQuery] string? keyword = null)
         {
-            var result = await _customerService.GetCustomersAsync(keyword);
+            var result = await _customerService.GetCustomersAsync(page, size, keyword);
             return Ok(result);
         }
 

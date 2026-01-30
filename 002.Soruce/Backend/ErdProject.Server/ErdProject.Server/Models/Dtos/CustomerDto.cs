@@ -1,67 +1,57 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json; // ✨ 이제 이거 필요 없습니다!
 
 namespace ErdProject.Server.Models.Dtos
 {
     public class CustomerDto
     {
-        [JsonProperty("customer_id")]
+        // [JsonProperty] 제거 -> C# 표준인 PascalCase로 작성하면 
+        // Startup설정에 의해 JSON의 camelCase(customerId)와 자동 연결됩니다.
+
         public long CustomerId { get; set; }
 
-        [JsonProperty("cust_cd")]
         public string? CustCd { get; set; }
 
-        [JsonProperty("cust_nm")]
         public string? CustNm { get; set; }
 
-        [JsonProperty("cust_nm_en")]
         public string? CustNmEn { get; set; }
 
-        [JsonProperty("cust_type_cd")]
         public string? CustTypeCd { get; set; }
 
-        [JsonProperty("industry_cd")]
         public string? IndustryCd { get; set; }
 
-        [JsonProperty("mfg_type_cd")]
         public string? MfgTypeCd { get; set; }
 
-        [JsonProperty("dev_capability_cd")]
         public string? DevCapabilityCd { get; set; }
 
-        [JsonProperty("source_mod_yn")]
         public string? SourceModYn { get; set; }
 
-        [JsonProperty("biz_no")]
         public string? BizNo { get; set; }
 
-        [JsonProperty("tel_no")]
         public string? TelNo { get; set; }
 
-        [JsonProperty("zip_cd")]
         public string? ZipCd { get; set; }
 
-        [JsonProperty("addr1")]
         public string? Addr1 { get; set; }
 
-        [JsonProperty("addr2")]
         public string? Addr2 { get; set; }
 
-        [JsonProperty("timezone_cd")]
         public string? TimezoneCd { get; set; }
 
-        [JsonProperty("comments")]
         public string? Comments { get; set; }
 
-        [JsonProperty("sort_no")]
         public int SortNo { get; set; }
 
-        [JsonProperty("use_yn")]
         public string? UseYn { get; set; }
 
-        [JsonProperty("created_by")]
+        // ✨ [중요] 프론트엔드가 'regDt', 'modDt'로 보내므로 
+        // DTO 이름도 발음을 맞춰줘야 자동 매핑됩니다. (CreatedDt -> RegDt)
+        public DateTime? RegDt { get; set; }
+
         public string? CreatedBy { get; set; }
 
-        [JsonProperty("updated_by")]
+        public DateTime? ModDt { get; set; }
+
         public string? UpdatedBy { get; set; }
     }
 }
