@@ -8,6 +8,7 @@ namespace ErdProject.Server.Models.Dtos
 
         public long CustomerId { get; set; }
 
+        public string? CustNm { get; set; }
         public string? SiteCd { get; set; }
 
         public string? SiteNm { get; set; }

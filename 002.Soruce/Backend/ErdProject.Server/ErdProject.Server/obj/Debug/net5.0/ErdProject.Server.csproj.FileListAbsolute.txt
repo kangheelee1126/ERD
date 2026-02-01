@@ -62,3 +62,13 @@ D:\000.WORKSAPCE\006.WebRoot\001.ERD\002.Soruce\Backend\ErdProject.Server\ErdPro
 D:\000.WORKSAPCE\006.WebRoot\001.ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
 D:\000.WORKSAPCE\006.WebRoot\001.ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 D:\000.WORKSAPCE\006.WebRoot\001.ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.csproj.AssemblyReference.cache
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.GeneratedMSBuildEditorConfig.editorconfig
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.AssemblyInfoInputs.cache
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.AssemblyInfo.cs
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.csproj.CoreCompileInputs.cache
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.MvcApplicationPartsAssemblyInfo.cs
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.MvcApplicationPartsAssemblyInfo.cache
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.sourcelink.json
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.dll
+D:\001.WorkSpace\002.ROOT\ERD\002.Soruce\Backend\ErdProject.Server\ErdProject.Server\obj\Debug\net5.0\ErdProject.Server.pdb

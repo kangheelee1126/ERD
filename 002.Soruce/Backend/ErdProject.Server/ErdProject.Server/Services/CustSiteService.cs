@@ -18,20 +18,38 @@ namespace ErdProject.Server.Services
             _context = context;
         }
 
-        public async Task<(IEnumerable<BusinessSiteDto> Items, int TotalCount)> GetSitesAsync(int page, int size, string? siteNm)
+        /// <summary>
+        /// 사업장 리스트 조회 (고객사 필터 및 통합 키워드 검색 포함)
+        /// </summary>
+        public async Task<(IEnumerable<BusinessSiteDto> Items, int TotalCount)> GetSitesAsync(int page, int size, string? keyword, long? customerId = null)
         {
-            var query = _context.CustSites.AsQueryable();
+            // 1. 고객사 정보를 포함하여 기본 쿼리 구성 [cite: 2026-01-30]
+            var query = _context.CustSites
+                .Include(x => x.customer)
+                .AsQueryable();
 
-            // 검색 조건 처리
-            if (!string.IsNullOrEmpty(siteNm))
+            // 2. 고객사 코드(ID) 필터 처리 [cite: 2026-01-30]
+            if (customerId.HasValue && customerId.Value > 0)
             {
-                query = query.Where(x => x.SITE_NM.Contains(siteNm));
+                query = query.Where(x => x.CUSTOMER_ID == customerId.Value);
             }
 
-            // 전체 건수 조회 (페이징 초기화 및 UI 표시용)
+            // 3. 통합 키워드 검색 처리 (ID 또는 사업장명) [cite: 2026-01-30]
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                // keyword가 숫자인 경우 ID 검색 병행, 아닌 경우 명칭 검색만 수행
+                bool isNumeric = long.TryParse(keyword, out long searchId);
+
+                query = query.Where(x =>
+                    x.SITE_NM.Contains(keyword) ||
+                    (isNumeric && x.SITE_ID == searchId)
+                );
+            }
+
+            // 4. 전체 건수 조회 (페이징 초기화용) [cite: 2026-01-30]
             int totalCount = await query.CountAsync();
 
-            // 페이징 및 DTO 변환 (PascalCase 매핑)
+            // 5. 페이징 및 DTO 변환 [cite: 2026-01-30]
             var items = await query
                 .OrderBy(x => x.SORT_NO)
                 .Skip((page - 1) * size)
@@ -40,6 +58,8 @@ namespace ErdProject.Server.Services
                 {
                     SiteId = s.SITE_ID,
                     CustomerId = s.CUSTOMER_ID,
+                    // 고객사명 매핑 (Include 필수) [cite: 2026-01-30]
+                    CustNm = s.customer != null ? s.customer.CustNm: string.Empty,
                     SiteCd = s.SITE_CD,
                     SiteNm = s.SITE_NM,
                     SiteNmEn = s.SITE_NM_EN,
@@ -54,9 +74,9 @@ namespace ErdProject.Server.Services
                     Comments = s.COMMENTS,
                     SortNo = s.SORT_NO,
                     UseYn = s.USE_YN,
-                    RegDt = s.CREATED_DT, // CreatedDt -> RegDt 매핑
+                    RegDt = s.CREATED_DT,
                     CreatedBy = s.CREATED_BY,
-                    ModDt = s.UPDATED_DT, // UpdatedDt -> ModDt 매핑
+                    ModDt = s.UPDATED_DT,
                     UpdatedBy = s.UPDATED_BY
                 })
                 .ToListAsync();
@@ -66,14 +86,35 @@ namespace ErdProject.Server.Services
 
         public async Task<BusinessSiteDto?> GetSiteByIdAsync(long id)
         {
-            var s = await _context.CustSites.FindAsync(id);
+            var s = await _context.CustSites
+                .Include(x => x.customer)
+                .FirstOrDefaultAsync(x => x.SITE_ID == id);
+
             if (s == null) return null;
 
             return new BusinessSiteDto
             {
                 SiteId = s.SITE_ID,
+                CustomerId = s.CUSTOMER_ID,
+                CustNm = s.customer != null ? s.customer.CustNm : string.Empty,
+                SiteCd = s.SITE_CD,
                 SiteNm = s.SITE_NM,
-                // ... 나머지 필드 매핑
+                SiteNmEn = s.SITE_NM_EN,
+                SiteTypeCd = s.SITE_TYPE_CD,
+                TelNo = s.TEL_NO,
+                FaxNo = s.FAX_NO,
+                ZipCd = s.ZIP_CD,
+                Addr1 = s.ADDR1,
+                Addr2 = s.ADDR2,
+                TimezoneCd = s.TIMEZONE_CD,
+                IsMain = s.IS_MAIN,
+                UseYn = s.USE_YN,
+                SortNo = s.SORT_NO,
+                Comments = s.COMMENTS,
+                RegDt = s.CREATED_DT,
+                CreatedBy = s.CREATED_BY,
+                ModDt = s.UPDATED_DT,
+                UpdatedBy = s.UPDATED_BY
             };
         }
 
@@ -97,13 +138,13 @@ namespace ErdProject.Server.Services
                 SORT_NO = dto.SortNo,
                 USE_YN = dto.UseYn ?? "Y",
                 CREATED_DT = DateTime.Now,
-                CREATED_BY = dto.CreatedBy
+                CREATED_BY = dto.CreatedBy // 프론트에서 넘어온 userId 자동 주입 [cite: 2026-01-30]
             };
 
             _context.CustSites.Add(entity);
             await _context.SaveChangesAsync();
 
-            dto.SiteId = entity.SITE_ID; // 생성된 Identity ID 반환
+            dto.SiteId = entity.SITE_ID;
             return dto;
         }
 
@@ -112,7 +153,7 @@ namespace ErdProject.Server.Services
             var entity = await _context.CustSites.FindAsync(dto.SiteId);
             if (entity == null) return false;
 
-            // PK 항목(SITE_ID, CUSTOMER_ID)은 수정을 방지함
+            // PK 항목 및 중요 키(SITE_ID, CUSTOMER_ID)는 수정을 방지함 [cite: 2026-01-30]
             entity.SITE_CD = dto.SiteCd ?? entity.SITE_CD;
             entity.SITE_NM = dto.SiteNm ?? entity.SITE_NM;
             entity.SITE_NM_EN = dto.SiteNmEn;
@@ -128,7 +169,7 @@ namespace ErdProject.Server.Services
             entity.SORT_NO = dto.SortNo;
             entity.USE_YN = dto.UseYn ?? "Y";
             entity.UPDATED_DT = DateTime.Now;
-            entity.UPDATED_BY = dto.UpdatedBy;
+            entity.UPDATED_BY = dto.UpdatedBy; // 수정자 ID 자동 주입 [cite: 2026-01-30]
 
             await _context.SaveChangesAsync();
             return true;

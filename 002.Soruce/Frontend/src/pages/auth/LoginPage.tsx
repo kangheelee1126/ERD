@@ -39,9 +39,11 @@ const LoginPage = () => {
         const { userName , userNo } = response.data;
         
         // ✨ [핵심 수정] localStorage에 사용자 정보를 저장하여 사이드바와 공유합니다. [cite: 2026-01-27]
+        
         localStorage.setItem('userNo', userNo.toString());
         localStorage.setItem('userName', userName);
-        
+        localStorage.setItem('userId', id); // ✨ 다른 페이지에서 참조할 핵심 ID
+
         alert(`${userName}님, 환영합니다!`);
         console.log('로그인 성공 데이터:', response.data);
         
