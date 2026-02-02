@@ -102,6 +102,7 @@ const BusinessManage: React.FC = () => {
 
     const handleCustSelect = (customer: any) => {
         if (custSearchTarget === 'FILTER') {
+            alert(customer.customerId);
             setSearchCustId(customer.customerId);
             setSearchCustNm(customer.custNm);
         } else {
