@@ -3,6 +3,7 @@ using ErdProject.Server.Models.Dtos;
 using ErdProject.Server.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -183,6 +184,68 @@ namespace ErdProject.Server.Services
             {
                 _context.Contacts.Remove(entity);
                 await _context.SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
+        /// ✨ [에러 해결] 담당자별 기지정 역할 목록 조회 [cite: 2026-01-30]
+        /// </summary>
+        public async Task<List<ContactRoleSaveDto>> GetContactRolesAsync(long contactId)
+        {
+            // DB 매핑 테이블에서 해당 담당자의 정보를 DTO 형태로 반환합니다. [cite: 2026-01-30]
+            return await _context.CustContactRoleMaps
+                .Where(x => x.ContactId == contactId)
+                .Select(x => new ContactRoleSaveDto
+                {
+                    RoleCd = x.RoleCd,
+                    IsPrimary = x.IsPrimary,
+                    StartDt = x.StartDt, // 추가 [cite: 2026-01-30]
+                    EndDt = x.EndDt,     // 추가 [cite: 2026-01-30]
+                    Note = x.Note        // 추가 (비고 읽기 해결) [cite: 2026-01-30]
+                })
+                .ToListAsync();
+        }
+
+
+        /* ErdProject.Server/Services/ContactService.cs */
+        public async Task SaveContactRolesAsync(int contactId, List<ContactRoleSaveDto> roles)
+        {
+            // DbContext의 Database 기능을 사용하여 트랜잭션 시작 [cite: 2026-01-30]
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // 1. 기존 역할 삭제 (Delete) [cite: 2026-01-29]
+                    var existing = _context.CustContactRoleMaps.Where(x => x.ContactId == contactId);
+                    _context.CustContactRoleMaps.RemoveRange(existing);
+
+                    // 2. 신규 역할 삽입 (Insert) [cite: 2026-01-30]
+                    if (roles != null && roles.Count > 0)
+                    {
+                        var entities = roles.Select(r => new CustContactRoleMap
+                        {
+                            ContactId = contactId,
+                            RoleCd = r.RoleCd,
+                            IsPrimary = r.IsPrimary,
+                            // ✨ 데이터 매핑 추가
+                            StartDt = r.StartDt,
+                            EndDt = r.EndDt,
+                            Note = r.Note,
+                            CreatedBy = r.CreatedBy,
+                            UpdatedBy = r.UpdatedBy
+                            // CRT_DT, UPD_DT는 DB의 GETDATE()가 처리 [cite: 2026-01-30]
+                        });
+                        await _context.CustContactRoleMaps.AddRangeAsync(entities);
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync(); // 성공 시 확정 [cite: 2026-02-02]
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync(); // 오류 시 롤백 [cite: 2026-02-02]
+                    throw;
+                }
             }
         }
     }

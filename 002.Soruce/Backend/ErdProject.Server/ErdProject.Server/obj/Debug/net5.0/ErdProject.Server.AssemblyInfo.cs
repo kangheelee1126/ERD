@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ErdProject.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4918c1e1b1c5ea7b1a9e725724289bcf94086658")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("ErdProject.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ErdProject.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

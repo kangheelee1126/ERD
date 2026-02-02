@@ -37,6 +37,18 @@ export interface Contact {
     updBy?: string;
 }
 
+// 역할 정보 인터페이스 정의 [cite: 2026-01-30]
+export interface ContactRole {
+    roleCd: string;     // 역할 코드 (예: R01)
+    roleNm: string;     // 역할 명칭 (예: 영업담당)
+    isPrimary: string;  // 대표 여부 (Y/N)
+    isSelected?: boolean; // UI용: 선택 여부
+    // ✨ 설계서에 따른 새 필드 추가
+    startDt?: string | null; // 적용시작일
+    endDt?: string | null;   // 적용종료일
+    note?: string | null;    // 비고
+}
+
 export const ContactService = {
     // 1. 목록 조회 (페이징 + 검색)
     getContacts: async (page: number, size: number, custId?: number, keyword?: string) => {
@@ -67,5 +79,30 @@ export const ContactService = {
     deleteContact: async (id: number) => {
         const response = await api.delete(`/business/contact/${id}`);
         return response.data;
+    },
+
+    /**
+     * ✨ 모든 역할 코드 목록 조회 (공통코드 'ROLE_CD' 기준 가정)
+     */
+    getRoleCodes: async () => {
+        // 실제로는 공통코드 API를 호출하게 됩니다.
+        const response = await api.get('/CommonCode/ROLE_CD'); 
+        return response.data; // [{ code: 'R01', name: '영업담당' }, ...]
+    },
+
+    /**
+     * ✨ 특정 담당자의 할당된 역할 목록 조회
+     */
+    getContactRoles: async (contactId: number) => {
+        const response = await api.get(`/business/contact/${contactId}/Roles`);
+        return response.data; // [{ roleCd: 'R01', isPrimary: 'Y' }, ...]
+    },
+
+    /**
+     * ✨ 담당자 역할 매핑 정보 최종 저장
+     */
+    saveContactRoles: async (contactId: number, roles: ContactRole[]) => {
+        return await api.post(`/business/contact/${contactId}/Roles`, roles);
     }
+
 };

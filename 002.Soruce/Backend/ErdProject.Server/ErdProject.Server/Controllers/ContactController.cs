@@ -99,5 +99,36 @@ namespace ErdProject.Server.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        // ✨ 5. 담당자별 역할 조회 [cite: 2026-01-30]
+        [HttpGet("{id}/roles")]
+        public async Task<ActionResult<List<ContactRoleSaveDto>>> GetContactRoles(long id)
+        {
+            try
+            {
+                var result = await _contactService.GetContactRolesAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "역할 조회 중 오류 발생", error = ex.Message });
+            }
+        }
+
+        // ✨ 6. 담당자 역할 일괄 저장 [cite: 2026-01-30]
+        [HttpPost("{id}/roles")]
+        public async Task<IActionResult> SaveContactRoles(int id, [FromBody] List<ContactRoleSaveDto> roles)
+        {
+            try
+            {
+                // 서비스에서 트랜잭션을 걸어 Delete-Insert 수행 [cite: 2026-01-29, 2026-01-30]
+                await _contactService.SaveContactRolesAsync(id, roles);
+                return Ok(new { message = "역할 설정이 저장되었습니다." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "역할 저장 중 오류 발생", error = ex.Message });
+            }
+        }
     }
 }

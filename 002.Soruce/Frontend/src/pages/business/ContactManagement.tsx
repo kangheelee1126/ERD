@@ -3,12 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { 
     Users, Search, List, Plus, Edit, Trash2, 
     ChevronLeft, ChevronRight, // ✨ 이 두 아이콘이 반드시 있어야 합니다.
-    Star, X, Save 
+    Star, X, Save , UserCheck
 } from 'lucide-react';
 
 /* ✨ 서비스 및 타입 정의 임포트 */
 import { ContactService, type Contact } from '../../services/ContactService';
 import CustomerSearchModal from '../../components/modals/CustomerSearchModal'; // 6-1단계에서 만든 검색 팝업
+/* ContactManagement.tsx 상단 */
+import ContactRoleModal from './ContactRoleModal';
 
 /* ✨ 통합된 공통 CSS 임포트 */
 import '../../style/common-layout.css';
@@ -54,6 +56,10 @@ const ContactManagement: React.FC = () => {
     };
     const [formData, setFormData] = useState<Contact>(initialContact);
 
+    const [showRoleModal, setShowRoleModal] = useState(false); // 모달의 표시 여부 (T/F)
+    const [selectedContactId, setSelectedContactId] = useState<number | null>(null); // 선택된 담당자 ID 저장
+    // ✨ [수정] 담당자 성함을 저장할 상태 변수 추가 [cite: 2026-01-30]
+    const [selectedContactName, setSelectedContactName] = useState<string>('');
     // ==================================================================================
     // 2. 데이터 조회 및 API 연동
     // ==================================================================================
@@ -84,6 +90,27 @@ const ContactManagement: React.FC = () => {
     const handleSearch = () => {
         setPage(1); // 검색 시 1페이지로 초기화
         loadContacts();
+    };
+
+    // ==================================================================================
+    // 3. 팝업 및 UI 제어 로직
+    // ==================================================================================
+
+    /**
+     * 역할 매핑 모달 열기 [cite: 2026-01-30]
+     * @param id 선택된 담당자의 contactId
+     */
+    const openRoleModal = (id: number , name:string) => {
+        // 1. 어떤 담당자의 역할을 수정할지 ID 저장
+        setSelectedContactId(id);
+        
+        // 2. 역할 관리 모달 표시 상태를 true로 변경
+        setShowRoleModal(true);
+
+        setSelectedContactName(name); // ✨ 선택된 성함 저장 [cite: 2026-01-30]
+
+        // (선택 사항) 로그를 통해 정상 호출 확인
+        // console.log(`담당자 ID ${id}의 역할 관리 팝업 호출`);
     };
 
     // 삭제 핸들러
@@ -258,12 +285,14 @@ const ContactManagement: React.FC = () => {
                             <colgroup>
                                 <col width="50px" /><col width="150px" /><col width="100px" />
                                 <col width="120px" /><col width="130px" /><col width="*" />
-                                <col width="60px" /><col width="60px" /><col width="140px" />
+                                <col width="60px" /><col width="60px" /><col width="110px" /><col width="140px" />
                             </colgroup>
                             <thead>
                                 <tr>
                                     <th>No</th><th>고객사</th><th>담당자명</th><th>부서/직책</th>
-                                    <th>휴대폰</th><th>이메일</th><th>대표</th><th>상태</th><th>관리</th>
+                                    <th>휴대폰</th><th>이메일</th><th>대표</th><th>상태</th>
+                                    <th>역활관리</th>
+                                    <th>관리</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -284,6 +313,12 @@ const ContactManagement: React.FC = () => {
                                             <span className={item.isActive === 'Y' ? 'status-blue' : 'status-red'}>
                                                 {item.isActive === 'Y' ? '사용' : '미사용'}
                                             </span>
+                                        </td>
+                                        <td className="center">
+                                            {/* ✨ [수정] 버튼 클릭 시 성함(item.contactNm)을 함께 넘깁니다. [cite: 2026-01-30] */}
+                                            <button className="cm-btn edit" onClick={() => openRoleModal(item.contactId , item.contactNm)}>
+                                                <UserCheck size={14} /> 역활
+                                            </button>
                                         </td>
                                         <td className="center">
                                             <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
@@ -475,6 +510,15 @@ const ContactManagement: React.FC = () => {
                 onClose={() => setShowCustSearch(false)} 
                 onSelect={handleCustSelect} 
             />
+            {/* ✨ 1단계: 역할관리 모달 연결 (이 코드가 들어가야 경고가 사라집니다) [cite: 2026-01-30] */}
+            {showRoleModal && (
+                <ContactRoleModal 
+                    isOpen={showRoleModal}
+                    onClose={() => setShowRoleModal(false)}
+                    contactId={selectedContactId}
+                    contactName={selectedContactName}
+                />
+            )}
         </div>
     );
 };

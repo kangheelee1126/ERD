@@ -41,6 +41,9 @@ namespace ErdProject.Server.Data
         /// <summary> 사업장 마스터 테이블 (CUST_SITE_MST) </summary>
         public DbSet<CustSite> CustSites { get; set; } = null!;
 
+        // 리턴 타입(DbSet) 정의
+        public DbSet<CustContactRoleMap> CustContactRoleMaps { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
