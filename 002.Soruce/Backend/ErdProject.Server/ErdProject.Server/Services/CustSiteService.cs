@@ -35,15 +35,11 @@ namespace ErdProject.Server.Services
             }
 
             // 3. 통합 키워드 검색 처리 (ID 또는 사업장명) [cite: 2026-01-30]
+            // 2. 검색어 필터링 (SiteId -> SiteCd로 변경) [cite: 2026-01-30]
             if (!string.IsNullOrEmpty(keyword))
             {
-                // keyword가 숫자인 경우 ID 검색 병행, 아닌 경우 명칭 검색만 수행
-                bool isNumeric = long.TryParse(keyword, out long searchId);
-
-                query = query.Where(x =>
-                    x.SITE_NM.Contains(keyword) ||
-                    (isNumeric && x.SITE_ID == searchId)
-                );
+                // ✨ 기존 x.SiteId.ToString() 대신 x.SiteCd를 검색 조건에 포함합니다. [cite: 2026-01-30]
+                query = query.Where(x => x.SITE_CD.Contains(keyword) || x.SITE_NM.Contains(keyword));
             }
 
             // 4. 전체 건수 조회 (페이징 초기화용) [cite: 2026-01-30]

@@ -16,6 +16,11 @@ const CustomerManagement: React.FC = () => {
   const [pageSize, setPageSize] = useState(10); // 기본 10개
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  // 페이징 그룹 계산 (10개씩 끊기) [cite: 2026-01-30]
+  const pageGroup = Math.ceil(page / 10);
+  const lastPage = Math.min(totalPages, pageGroup * 10);
+  const firstPage = Math.max(1, (pageGroup - 1) * 10 + 1);
+
 
   // 공통코드 상태
   const [codes, setCodes] = useState<{
@@ -248,47 +253,27 @@ const CustomerManagement: React.FC = () => {
 
           {/* ✨ 페이지네이션 컨트롤 (하단) */}
           {totalPages > 0 && (
-            <div className="pagination-container" style={{ display: 'flex', justifyContent: 'center', marginTop: '15px', gap: '5px' }}>
-              {/* 이전 버튼 */}
-              <button 
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="paging-btn"
-                style={{ padding: '5px 8px', background: '#334155', border: '1px solid #475569', color: 'white', borderRadius: '4px', cursor: page === 1 ? 'not-allowed' : 'pointer', opacity: page === 1 ? 0.5 : 1 }}
-              >
-                <ChevronLeft size={16} />
-              </button>
+            <div className="pagination-container">
+            <button className="paging-btn" onClick={() => setPage(1)} disabled={page === 1}>
+                <ChevronLeft size={16}/><ChevronLeft size={16} style={{marginLeft:'-8px'}}/>
+            </button>
+            <button className="paging-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+                <ChevronLeft size={16}/>
+            </button>
 
-              {/* 페이지 번호 (간단 구현: 전체 페이지 나열) */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
-                // 페이지가 많을 경우 여기서 slice 로직 추가 가능 (예: 1~10까지만 표시)
-                <button
-                  key={pageNum}
-                  onClick={() => setPage(pageNum)}
-                  style={{
-                    padding: '5px 12px',
-                    background: page === pageNum ? '#3b82f6' : '#334155', // 현재 페이지 강조
-                    border: page === pageNum ? '1px solid #3b82f6' : '1px solid #475569',
-                    color: 'white',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    minWidth: '32px'
-                  }}
-                >
-                  {pageNum}
+            {Array.from({ length: lastPage - firstPage + 1 }, (_, i) => firstPage + i).map(n => (
+                <button key={n} className={`paging-btn ${page === n ? 'active' : ''}`} onClick={() => setPage(n)}>
+                    {n}
                 </button>
-              ))}
+            ))}
 
-              {/* 다음 버튼 */}
-              <button 
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="paging-btn"
-                style={{ padding: '5px 8px', background: '#334155', border: '1px solid #475569', color: 'white', borderRadius: '4px', cursor: page === totalPages ? 'not-allowed' : 'pointer', opacity: page === totalPages ? 0.5 : 1 }}
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
+            <button className="paging-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+                <ChevronRight size={16}/>
+            </button>
+            <button className="paging-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages}>
+                <ChevronRight size={16}/><ChevronRight size={16} style={{marginLeft:'-8px'}}/>
+            </button>
+        </div>
           )}
         </div>
       </div>

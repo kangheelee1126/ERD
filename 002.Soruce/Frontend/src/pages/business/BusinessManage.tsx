@@ -19,6 +19,12 @@ const BusinessManage: React.FC = () => {
     const [totalCount, setTotalCount] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
+    // 1. 현재 페이지가 속한 그룹의 시작과 끝 계산 [cite: 2026-01-30]
+    const pageGroup = Math.ceil(page / 10); // 현재 페이지가 몇 번째 10개 묶음인지 계산
+    const lastPage = Math.min(totalPages, pageGroup * 10); // 현재 그룹의 마지막 번호
+    const firstPage = Math.max(1, (pageGroup - 1) * 10 + 1); // 현재 그룹의 시작 번호
+
+
     const [searchCustId, setSearchCustId] = useState<number | undefined>(undefined);
     const [searchCustNm, setSearchCustNm] = useState('');
     const [searchKeyword, setSearchKeyword] = useState('');
@@ -243,11 +249,50 @@ const BusinessManage: React.FC = () => {
                         </table>
                     </div>
                     <div className="pagination-container">
-                        <button className="paging-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}><ChevronLeft size={16}/></button>
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
-                            <button key={n} className={`paging-btn ${page === n ? 'active' : ''}`} onClick={() => setPage(n)}>{n}</button>
+                        {/* 처음으로/이전 그룹 버튼 (선택사항) */}
+                        <button 
+                            className="paging-btn" 
+                            onClick={() => setPage(1)} 
+                            disabled={page === 1}
+                        >
+                            <ChevronLeft size={16}/><ChevronLeft size={16} style={{ marginLeft: '-8px' }}/>
+                        </button>
+                        
+                        <button 
+                            className="paging-btn" 
+                            onClick={() => setPage(p => Math.max(1, p - 1))} 
+                            disabled={page === 1}
+                        >
+                            <ChevronLeft size={16}/>
+                        </button>
+
+                        {/* ✨ 계산된 firstPage부터 lastPage까지만 출력 [cite: 2026-01-30] */}
+                        {Array.from({ length: lastPage - firstPage + 1 }, (_, i) => firstPage + i).map(n => (
+                            <button 
+                                key={n} 
+                                className={`paging-btn ${page === n ? 'active' : ''}`} 
+                                onClick={() => setPage(n)}
+                            >
+                                {n}
+                            </button>
                         ))}
-                        <button className="paging-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages || totalPages === 0}><ChevronRight size={16}/></button>
+
+                        <button 
+                            className="paging-btn" 
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))} 
+                            disabled={page === totalPages || totalPages === 0}
+                        >
+                            <ChevronRight size={16}/>
+                        </button>
+                        
+                        {/* 마지막으로/다음 그룹 버튼 (선택사항) */}
+                        <button 
+                            className="paging-btn" 
+                            onClick={() => setPage(totalPages)} 
+                            disabled={page === totalPages || totalPages === 0}
+                        >
+                            <ChevronRight size={16}/><ChevronRight size={16} style={{ marginLeft: '-8px' }}/>
+                        </button>
                     </div>
                 </div>
             </div>

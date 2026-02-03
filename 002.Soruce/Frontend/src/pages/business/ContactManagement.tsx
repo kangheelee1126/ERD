@@ -26,6 +26,10 @@ const ContactManagement: React.FC = () => {
     const [pageSize, setPageSize] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    // 1. 페이징 그룹 계산 [cite: 2026-01-30]
+    const pageGroup = Math.ceil(page / 10);
+    const lastPage = Math.min(totalPages, pageGroup * 10);
+    const firstPage = Math.max(1, (pageGroup - 1) * 10 + 1);
 
     // 검색 필터 상태
     const [searchCustId, setSearchCustId] = useState<number | undefined>(undefined);
@@ -342,29 +346,24 @@ const ContactManagement: React.FC = () => {
                     {/* 페이지네이션 (하단 고정) */}
                     {totalPages > 0 && (
                         <div className="pagination-container">
-                            <button 
-                                className="paging-btn"
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
-                                disabled={page === 1}
-                            >
+                            <button className="paging-btn" onClick={() => setPage(1)} disabled={page === 1}>
+                                <ChevronLeft size={16}/><ChevronLeft size={16} style={{marginLeft:'-8px'}}/>
+                            </button>
+                            <button className="paging-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
                                 <ChevronLeft size={16}/>
                             </button>
-                            {/* 간단히 전체 페이지 표시 (페이지 많을 경우 slice 로직 필요) */}
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
-                                <button
-                                    key={pageNum}
-                                    className={`paging-btn ${page === pageNum ? 'active' : ''}`}
-                                    onClick={() => setPage(pageNum)}
-                                >
-                                    {pageNum}
+
+                            {Array.from({ length: lastPage - firstPage + 1 }, (_, i) => firstPage + i).map(n => (
+                                <button key={n} className={`paging-btn ${page === n ? 'active' : ''}`} onClick={() => setPage(n)}>
+                                    {n}
                                 </button>
                             ))}
-                            <button 
-                                className="paging-btn"
-                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                disabled={page === totalPages}
-                            >
-                                <ChevronRight size={16} />
+
+                            <button className="paging-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages || totalPages === 0}>
+                                <ChevronRight size={16}/>
+                            </button>
+                            <button className="paging-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages || totalPages === 0}>
+                                <ChevronRight size={16}/><ChevronRight size={16} style={{marginLeft:'-8px'}}/>
                             </button>
                         </div>
                     )}
