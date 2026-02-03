@@ -15,7 +15,8 @@ import CommonCode from './pages/System/CommonCode';
 import CustomerManagement from './pages/base/CustomerManagement'; // [cite: 2026-01-28]
 import ContactManagement from './pages/business/ContactManagement';
 import BusinessSiteService from './pages/business/BusinessManage';
-
+// 직원정보
+import EmployeeManagement from './pages/Admin/EmployeeManagement';
 function App() {
   return (
     <Routes>
@@ -34,10 +35,15 @@ function App() {
         {/* 메뉴 관리 페이지 */}
         <Route path="/menu" element={<MenuManagePage />} />
 
-        {/* 사용자 관리 및 권한 관리 페이지 */}
-        <Route path="/admin/users" element={<UserManagement />} />
-        {/* ✨ 권한 관리 경로 등록 */}
-        <Route path="/admin/roles" element={<RoleManagement />} />
+{/* 시스템 관리 (Admin) 그룹 라우트 */}
+        <Route path="admin">
+          {/* 사용자 관리 및 권한 관리 페이지 */}
+          <Route path="users" element={<UserManagement />} />
+          {/* ✨ 권한 관리 경로 등록 */}
+          <Route path="roles" element={<RoleManagement />} />
+          {/* ✨ 직원정보 경로 등록 */}
+          <Route path="employee" element={<EmployeeManagement />} />
+        </Route>
 
         {/* 나머지 준비중 페이지들 */}
         <Route path="/sr" element={<div style={{color:'white'}}>SR 관리 페이지</div>} />
@@ -55,6 +61,8 @@ function App() {
         <Route path="/business/contact" element={<ContactManagement />} />
 
         <Route path="/business/manage" element={<BusinessSiteService />} />
+
+        
 
       </Route>
 

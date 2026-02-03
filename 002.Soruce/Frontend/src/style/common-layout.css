@@ -276,3 +276,28 @@ button { border: none; outline: none; cursor: pointer; border-radius: 4px; trans
 }
 .btn-action-group { display: flex; gap: 10px; }
 .req { color: var(--danger-color); margin-left: 4px; }
+
+/* 날짜 입력창 전용 스타일 보정 */
+.form-input.date-input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    padding-right: 10px; /* 캘린더 아이콘 공간 확보 */
+    text-transform: uppercase; /* 브라우저별 placeholder 대소문자 통일 */
+}
+
+/* 브라우저 기본 캘린더 아이콘 위치 및 색상 조정 */
+.form-input.date-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1); /* 다크모드에 맞춰 아이콘을 흰색으로 반전 */
+    opacity: 0.6;
+}
+
+.form-input.date-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* 값이 없을 때 표시되는 연도-월-일 텍스트 색상 연하게 */
+.form-input.date-input:invalid::-webkit-datetime-edit {
+    color: var(--text-secondary);
+}
