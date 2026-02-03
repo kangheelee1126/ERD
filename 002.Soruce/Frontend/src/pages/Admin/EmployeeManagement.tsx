@@ -1,5 +1,4 @@
-import React, { useState, useMemo } from 'react';
-/* ✨ 그룹 이동 아이콘 추가: ChevronsLeft, ChevronsRight */
+import React, { useState, useMemo, useEffect } from 'react'; // ✨ useEffect 추가
 import { 
     Search, UserPlus, Edit, Trash2, Users, 
     ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight 
@@ -10,18 +9,33 @@ import '../../style/common-layout.css';
 const EmployeeManagement: React.FC = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalCount, setTotalCount] = useState(125); // ✨ 테스트용 임시 건수
+    const [totalCount, setTotalCount] = useState(0); // ✨ 초기값 0으로 설정
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmp, setSelectedEmp] = useState<any>(null);
+
+    /* =========================================
+       ✨ 데이터 조회 로직 (setTotalCount 사용) [cite: 2026-01-30]
+       ========================================= */
+    const fetchEmployees = async () => {
+        // 실제 구현 시: const response = await EmployeeService.getEmployees({ page, size: pageSize });
+        // 현재는 가이드라인에 따라 임시 데이터 건수를 세팅하여 경고 해결 [cite: 2026-02-03]
+        const mockTotalCount = 125; 
+        setTotalCount(mockTotalCount); 
+        
+        console.log(`조회 실행: ${page}페이지, ${pageSize}개씩, 전체 ${mockTotalCount}건`);
+    };
+
+    /* ✨ 페이지 번호나 사이즈가 변경될 때마다 자동 조회 [cite: 2026-01-30] */
+    useEffect(() => {
+        fetchEmployees();
+    }, [page, pageSize]);
 
     /* =========================================
        ✨ 페이징 그룹 계산 로직 [cite: 2026-02-03]
        ========================================= */
     const { totalPages, startPage, endPage, pageNumbers } = useMemo(() => {
         const total = Math.ceil(totalCount / pageSize) || 1;
-        // 현재 페이지가 속한 그룹의 시작 번호 (1, 11, 21...)
         const start = Math.floor((page - 1) / 10) * 10 + 1;
-        // 그룹의 끝 번호 (최대 10개 표시 지침 준수)
         const end = Math.min(start + 9, total);
         
         const nums = [];
@@ -30,7 +44,11 @@ const EmployeeManagement: React.FC = () => {
         return { totalPages: total, startPage: start, endPage: end, pageNumbers: nums };
     }, [totalCount, pageSize, page]);
 
-    const handleSearch = () => setPage(1); // 검색 시 1페이지 초기화 [cite: 2026-02-03]
+    /* 검색 시 1페이지 초기화 지침 준수 [cite: 2026-02-03] */
+    const handleSearch = () => {
+        setPage(1);
+        fetchEmployees();
+    };
     
     const openModal = (emp: any = null) => {
         setSelectedEmp(emp);
@@ -67,6 +85,7 @@ const EmployeeManagement: React.FC = () => {
                 <div className="part-header">
                     <div className="header-left">
                         <span className="part-title">직원 목록</span>
+                        {/* ✨ totalCount가 실시간으로 반영됨 [cite: 2026-01-30] */}
                         <span className="text-secondary">(전체: <b className="highlight-text">{totalCount}</b>건)</span>
                     </div>
                     <div className="header-right">
@@ -100,8 +119,9 @@ const EmployeeManagement: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
+                            {/* 실제 데이터 매핑 시: employees.map(...) */}
                             {[1, 2, 3].map((idx) => (
-                                <tr key={idx}>
+                                <tr key={idx} onDoubleClick={() => openModal({id: idx, empNo: `EMP${idx}`})}>
                                     <td className="center">{idx}</td>
                                     <td className="center">EMP202600{idx}</td>
                                     <td className="center">홍길동{idx}</td>
@@ -111,8 +131,12 @@ const EmployeeManagement: React.FC = () => {
                                     <td className="center"><span className="status-blue">재직</span></td>
                                     <td className="center">
                                         <div className="btn-action-group flex-center">
-                                            <button className="cm-btn edit" onClick={() => openModal({id: idx})}><Edit size={14} /> 수정</button>
-                                            <button className="cm-btn delete"><Trash2 size={14} /> 삭제</button>
+                                            <button className="cm-btn edit" onClick={() => openModal({id: idx})}>
+                                                <Edit size={14} /> 수정
+                                            </button>
+                                            <button className="cm-btn delete">
+                                                <Trash2 size={14} /> 삭제
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -121,20 +145,14 @@ const EmployeeManagement: React.FC = () => {
                     </table>
                 </div>
 
-                {/* =========================================
-                   ✨ 수정된 페이징 영역 [cite: 2026-01-30, 2026-02-03]
-                   ========================================= */}
                 <div className="pagination-container">
-                    {/* 처음으로 */}
                     <button className="paging-btn" disabled={page === 1} onClick={() => setPage(1)}>
                         <ChevronsLeft />
                     </button>
-                    {/* 이전 그룹 이동 */}
                     <button className="paging-btn" disabled={startPage === 1} onClick={() => setPage(startPage - 1)}>
                         <ChevronLeft />
                     </button>
 
-                    {/* 페이지 번호 그룹 (최대 10개) */}
                     {pageNumbers.map(num => (
                         <button 
                             key={num} 
@@ -145,11 +163,9 @@ const EmployeeManagement: React.FC = () => {
                         </button>
                     ))}
 
-                    {/* 다음 그룹 이동 */}
                     <button className="paging-btn" disabled={endPage === totalPages} onClick={() => setPage(endPage + 1)}>
                         <ChevronRight />
                     </button>
-                    {/* 끝으로 */}
                     <button className="paging-btn" disabled={page === totalPages} onClick={() => setPage(totalPages)}>
                         <ChevronsRight />
                     </button>
