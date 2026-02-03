@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
-import { Search, UserPlus, Edit, Trash2, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+/* ✨ 그룹 이동 아이콘 추가: ChevronsLeft, ChevronsRight */
+import { 
+    Search, UserPlus, Edit, Trash2, Users, 
+    ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight 
+} from 'lucide-react';
 import EmployeeModal from './EmployeeModal';
-/* 공통 CSS 임포트 */
 import '../../style/common-layout.css';
 
 const EmployeeManagement: React.FC = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [totalCount, setTotalCount] = useState(125); // ✨ 테스트용 임시 건수
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmp, setSelectedEmp] = useState<any>(null);
 
-    const handleSearch = () => setPage(1); // 검색 시 1페이지 초기화 지침 준수 [cite: 2026-02-03]
+    /* =========================================
+       ✨ 페이징 그룹 계산 로직 [cite: 2026-02-03]
+       ========================================= */
+    const { totalPages, startPage, endPage, pageNumbers } = useMemo(() => {
+        const total = Math.ceil(totalCount / pageSize) || 1;
+        // 현재 페이지가 속한 그룹의 시작 번호 (1, 11, 21...)
+        const start = Math.floor((page - 1) / 10) * 10 + 1;
+        // 그룹의 끝 번호 (최대 10개 표시 지침 준수)
+        const end = Math.min(start + 9, total);
+        
+        const nums = [];
+        for (let i = start; i <= end; i++) nums.push(i);
+        
+        return { totalPages: total, startPage: start, endPage: end, pageNumbers: nums };
+    }, [totalCount, pageSize, page]);
+
+    const handleSearch = () => setPage(1); // 검색 시 1페이지 초기화 [cite: 2026-02-03]
     
     const openModal = (emp: any = null) => {
         setSelectedEmp(emp);
@@ -18,9 +38,7 @@ const EmployeeManagement: React.FC = () => {
     };
 
     return (
-        /* ✨ CSS 표준에 맞춰 page-container로 변경 */
         <div className="page-container">
-            {/* 상단 헤더 영역 */}
             <div className="page-header">
                 <div className="header-title">
                     <Users size={24} color="var(--primary-color)" />
@@ -28,7 +46,6 @@ const EmployeeManagement: React.FC = () => {
                 </div>
             </div>
 
-            {/* 검색 필터바 [cite: 2026-01-29] */}
             <div className="filter-bar">
                 <div className="filter-item">
                     <label>검색어</label>
@@ -41,18 +58,16 @@ const EmployeeManagement: React.FC = () => {
                         <option value="N">퇴사</option>
                     </select>
                 </div>
-                {/* ✨ CSS에 정의된 전용 조회 버튼 스타일 사용 */}
                 <button className="btn-search" onClick={handleSearch}>
                     <Search size={14} /> 조회
                 </button>
             </div>
 
-            {/* 메인 컨텐츠 (그리드) 영역 */}
             <div className="content-body section">
                 <div className="part-header">
                     <div className="header-left">
                         <span className="part-title">직원 목록</span>
-                        <span className="text-secondary">(전체: <b className="highlight-text">0</b>건)</span>
+                        <span className="text-secondary">(전체: <b className="highlight-text">{totalCount}</b>건)</span>
                     </div>
                     <div className="header-right">
                         <select 
@@ -70,12 +85,11 @@ const EmployeeManagement: React.FC = () => {
                     </div>
                 </div>
 
-                {/* ✨ 스크롤 제어를 위해 part-body 적용 */}
                 <div className="part-body">
                     <table className="standard-table">
                         <colgroup>
-                            <col width="60px" /><col width="100px" /><col width="120px" />
-                            <col width="*" /><col width="120px" /><col width="100px" />
+                            <col width="60px" /><col width="120px" /><col width="120px" />
+                            <col width="*" /><col width="150px" /><col width="100px" />
                             <col width="100px" /><col width="160px" />
                         </colgroup>
                         <thead>
@@ -97,12 +111,8 @@ const EmployeeManagement: React.FC = () => {
                                     <td className="center"><span className="status-blue">재직</span></td>
                                     <td className="center">
                                         <div className="btn-action-group flex-center">
-                                            <button className="cm-btn edit" onClick={() => openModal({id: idx})}>
-                                                <Edit size={14} /> 수정
-                                            </button>
-                                            <button className="cm-btn delete">
-                                                <Trash2 size={14} /> 삭제
-                                            </button>
+                                            <button className="cm-btn edit" onClick={() => openModal({id: idx})}><Edit size={14} /> 수정</button>
+                                            <button className="cm-btn delete"><Trash2 size={14} /> 삭제</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -111,27 +121,42 @@ const EmployeeManagement: React.FC = () => {
                     </table>
                 </div>
 
-                {/* 페이징 영역 (part-body 내부 하단 배치) [cite: 2026-01-30] */}
+                {/* =========================================
+                   ✨ 수정된 페이징 영역 [cite: 2026-01-30, 2026-02-03]
+                   ========================================= */}
                 <div className="pagination-container">
-                    <button className="paging-btn" disabled={page === 1} onClick={() => setPage(prev => prev - 1)}>
+                    {/* 처음으로 */}
+                    <button className="paging-btn" disabled={page === 1} onClick={() => setPage(1)}>
+                        <ChevronsLeft />
+                    </button>
+                    {/* 이전 그룹 이동 */}
+                    <button className="paging-btn" disabled={startPage === 1} onClick={() => setPage(startPage - 1)}>
                         <ChevronLeft />
                     </button>
-                    <button className={`paging-btn ${page === 1 ? 'active' : ''}`} onClick={() => setPage(1)}>1</button>
-                    <button className={`paging-btn ${page === 2 ? 'active' : ''}`} onClick={() => setPage(2)}>2</button>
-                    <button className="paging-btn" onClick={() => setPage(prev => prev + 1)}>
+
+                    {/* 페이지 번호 그룹 (최대 10개) */}
+                    {pageNumbers.map(num => (
+                        <button 
+                            key={num} 
+                            className={`paging-btn ${page === num ? 'active' : ''}`}
+                            onClick={() => setPage(num)}
+                        >
+                            {num}
+                        </button>
+                    ))}
+
+                    {/* 다음 그룹 이동 */}
+                    <button className="paging-btn" disabled={endPage === totalPages} onClick={() => setPage(endPage + 1)}>
                         <ChevronRight />
+                    </button>
+                    {/* 끝으로 */}
+                    <button className="paging-btn" disabled={page === totalPages} onClick={() => setPage(totalPages)}>
+                        <ChevronsRight />
                     </button>
                 </div>
             </div>
 
-            {/* 등록/수정 팝업 */}
-            {isModalOpen && (
-                <EmployeeModal 
-                    isOpen={isModalOpen} 
-                    onClose={() => setIsModalOpen(false)} 
-                    data={selectedEmp}
-                />
-            )}
+            {isModalOpen && <EmployeeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={selectedEmp} />}
         </div>
     );
 };
