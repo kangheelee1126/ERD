@@ -103,6 +103,20 @@ export const ContactService = {
      */
     saveContactRoles: async (contactId: number, roles: ContactRole[]) => {
         return await api.post(`/business/contact/${contactId}/Roles`, roles);
+    },
+
+    /**
+     * 담당자별 연결된 사업장 목록 조회
+     */
+    getContactSiteMaps: async (contactId: number) => {
+        return await api.get(`/business/ContactSite/${contactId}`);
+    },
+
+    /**
+     * 담당자별 사업장 연결 정보 일괄 저장
+     */
+    saveContactSiteMaps: async (contactId: number, maps: any[]) => {
+        return await api.post(`/business/ContactSite/${contactId}`, maps);
     }
 
 };

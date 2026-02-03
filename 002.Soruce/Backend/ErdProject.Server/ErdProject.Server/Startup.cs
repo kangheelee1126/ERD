@@ -9,6 +9,7 @@ using ErdProject.Server.Data;
 using ErdProject.Server.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization; // ✨ 카멜 케이스 설정을 위해 추가
+using ErdProject.Server.IServices;
 
 namespace ErdProject.Server
 {
@@ -49,6 +50,10 @@ namespace ErdProject.Server
             services.AddScoped<IContactService, ContactService>();
             // 사업장 관리
             services.AddScoped<ICustSiteService, CustSiteService>();
+
+            // ✨ [추가] 담당자 사업장 연결 서비스 (500 InvalidOperationException 해결) [cite: 2026-02-03]
+            // 컨트롤러가 IContactSiteService를 주입받을 수 있도록 설정합니다.
+            services.AddScoped<IContactSiteService, ContactSiteService>();
 
             // 4. CORS 설정
             services.AddCors(options =>

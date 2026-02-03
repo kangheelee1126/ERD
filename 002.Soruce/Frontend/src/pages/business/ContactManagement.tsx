@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { 
     Users, Search, List, Plus, Edit, Trash2, 
     ChevronLeft, ChevronRight, // ✨ 이 두 아이콘이 반드시 있어야 합니다.
-    Star, X, Save , UserCheck
+    Star, X, Save , UserCheck , MapPin
 } from 'lucide-react';
 
 /* ✨ 서비스 및 타입 정의 임포트 */
@@ -11,6 +11,9 @@ import { ContactService, type Contact } from '../../services/ContactService';
 import CustomerSearchModal from '../../components/modals/CustomerSearchModal'; // 6-1단계에서 만든 검색 팝업
 /* ContactManagement.tsx 상단 */
 import ContactRoleModal from './ContactRoleModal';
+
+/* ✨ 1. 사업장 연결 관리 모달 임포트 */
+import ContactSiteModal from './ContactSiteModal';
 
 /* ✨ 통합된 공통 CSS 임포트 */
 import '../../style/common-layout.css';
@@ -42,6 +45,14 @@ const ContactManagement: React.FC = () => {
     
     // 검색 팝업 호출 주체 구분 ('FILTER': 검색바에서 호출, 'FORM': 입력폼에서 호출)
     const [custSearchTarget, setCustSearchTarget] = useState<'FILTER' | 'FORM'>('FILTER');
+
+    /* ✨ 2. 사업장 모달 표시 상태 추가 */
+    const [showSiteModal, setShowSiteModal] = useState(false);
+
+    /* 상단 상태 정의 추가 */
+    const [selectedCustId, setSelectedCustId] = useState<number | null>(null);
+
+
 
     // 입력 폼 데이터 (초기값 설정)
     const initialContact: Contact = {
@@ -116,6 +127,17 @@ const ContactManagement: React.FC = () => {
         // (선택 사항) 로그를 통해 정상 호출 확인
         // console.log(`담당자 ID ${id}의 역할 관리 팝업 호출`);
     };
+
+    /**
+     * ✨ 3. 사업장 연결 관리 모달 열기 함수
+     */
+    const openSiteModal = (id: number, name: string , custId: number) => {
+        setSelectedContactId(id);
+        setSelectedContactName(name);
+        setSelectedCustId(custId); // ✨ 고객사 ID 저장
+        setShowSiteModal(true);
+    };
+
 
     // 삭제 핸들러
     const handleDelete = async (id: number) => {
@@ -287,16 +309,15 @@ const ContactManagement: React.FC = () => {
                     <div style={{ overflow: 'auto' }}> 
                         <table className="standard-table">
                             <colgroup>
-                                <col width="50px" /><col width="150px" /><col width="100px" />
-                                <col width="120px" /><col width="130px" /><col width="*" />
-                                <col width="60px" /><col width="60px" /><col width="110px" /><col width="140px" />
+                                <col width="50px" /><col width="150px" /><col width="100px" /><col width="120px" />
+                                <col width="130px" /><col width="*" /><col width="60px" /><col width="60px" />
+                                <col width="110px" /><col width="110px" /><col width="140px" />
                             </colgroup>
                             <thead>
                                 <tr>
                                     <th>No</th><th>고객사</th><th>담당자명</th><th>부서/직책</th>
                                     <th>휴대폰</th><th>이메일</th><th>대표</th><th>상태</th>
-                                    <th>역활관리</th>
-                                    <th>관리</th>
+                                    <th>역활관리</th><th>사업장</th><th>관리</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -322,6 +343,12 @@ const ContactManagement: React.FC = () => {
                                             {/* ✨ [수정] 버튼 클릭 시 성함(item.contactNm)을 함께 넘깁니다. [cite: 2026-01-30] */}
                                             <button className="cm-btn edit" onClick={() => openRoleModal(item.contactId , item.contactNm)}>
                                                 <UserCheck size={14} /> 역활
+                                            </button>
+                                        </td>
+                                        {/* ✨ 6. 사업장 관리 버튼 추가 */}
+                                        <td className="center">
+                                            <button className="cm-btn edit" onClick={() => openSiteModal(item.contactId, item.contactNm , item.customerId)}>
+                                                <MapPin size={14} /> 사업장
                                             </button>
                                         </td>
                                         <td className="center">
@@ -518,6 +545,18 @@ const ContactManagement: React.FC = () => {
                     contactName={selectedContactName}
                 />
             )}
+
+            {/* ✨ 이 부분이 추가되어야 6133 에러가 해결됩니다. */}
+            {showSiteModal && (
+                <ContactSiteModal 
+                    isOpen={showSiteModal}
+                    onClose={() => setShowSiteModal(false)}
+                    contactId={selectedContactId}
+                    contactName={selectedContactName}
+                    customerId={selectedCustId}
+                />
+            )}
+
         </div>
     );
 };

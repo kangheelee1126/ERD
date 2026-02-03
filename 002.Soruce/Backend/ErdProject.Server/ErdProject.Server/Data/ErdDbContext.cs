@@ -44,6 +44,9 @@ namespace ErdProject.Server.Data
         // 리턴 타입(DbSet) 정의
         public DbSet<CustContactRoleMap> CustContactRoleMaps { get; set; } = default!;
 
+        //담당자별 사업장매핑
+        public DbSet<CustContactSiteMap> CustContactSiteMaps { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
