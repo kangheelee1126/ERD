@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Users, Plus, Save, X, Trash2, Edit, ShieldCheck } from 'lucide-react';
+import { Users, Plus, Save, X, Trash2, Edit, ShieldCheck , Search } from 'lucide-react';
 import { UserService } from '../../services/UserService';
 import { RoleService } from '../../services/RoleService';
 import { UserRoleService } from '../../services/UserRoleService';
 import './UserManagement.css'; // 전용 스타일 파일
+import EmployeeSearchModal from '../../components/modals/EmployeeSearchModal';
 
 const UserManagement = () => {
     const [users, setUsers] = useState<any[]>([]);
@@ -12,8 +13,10 @@ const UserManagement = () => {
     const [showRoleModal, setShowRoleModal] = useState(false);
     const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
     const [user, setUser] = useState<any>({ 
-        userNo: 0, userId: '', userName: '', password: '', email: '', useYn: 'Y', regDt: '' 
+        userNo: 0, userId: '', userName: '', password: '', email: '', useYn: 'Y', regDt: '' ,
+        empId: null, empNm: ''
     });
+    
 
     const loadData = async () => {
         try {
@@ -26,6 +29,22 @@ const UserManagement = () => {
         } catch (error) {
             console.error("데이터 로드 실패:", error);
         }
+    };
+
+    // 1. 직원 검색 팝업 열림 상태 관리
+    const [showEmpSearch, setShowEmpSearch] = useState(false);
+
+    /* 2. 직원 선택 시 실행되는 매핑 함수 */
+    const handleSelectEmployee = (emp: any) => {
+        // 팝업에서 받아온 직원 정보를 현재 수정 중인 user 상태에 업데이트
+        setUser({ 
+            ...user, 
+            empId: emp.empId, // DB의 EMP_ID 컬럼과 매핑
+            empNm: emp.empNm  // 화면 표시용 성명
+        });
+        
+        // 매핑 완료 후 팝업 닫기
+        setShowEmpSearch(false);
     };
 
     useEffect(() => { loadData(); }, []);
@@ -101,6 +120,7 @@ const UserManagement = () => {
                             <th className="um-th center" style={{ width: '60px' }}>No</th>
                             <th className="um-th left" style={{ width: '120px' }}>아이디</th>
                             <th className="um-th center" style={{ width: '200px' }}>이름</th>
+                            <th className="um-th center">매핑 직원</th>
                             <th className="um-th center">이메일</th>
                             <th className="um-th center" style={{ width: '100px' }}>사용여부</th>
                             <th className="um-th center" style={{ width: '200px' }}>등록일</th>
@@ -117,6 +137,7 @@ const UserManagement = () => {
                                 <td className="um-td center">{idx + 1}</td>
                                 <td className="um-td left highlight-id">{u.userId}</td>
                                 <td className="um-td center">{u.userName}</td>
+                                <td className="um-td center highlight-text">{u.empNm || '-'}</td>
                                 <td className="um-td left">{u.email || '-'}</td>
                                 <td className="um-td center">
                                     <span className={u.useYn === 'Y' ? 'status-blue' : 'status-red'}>
@@ -163,6 +184,18 @@ const UserManagement = () => {
                                     <tr>
                                         <th className="form-label">이름</th>
                                         <td><input className="form-input" value={user.userName} onChange={(e) => setUser({...user, userName: e.target.value})} /></td>
+                                    </tr>
+                                    {/* ✨ [추가] 매핑 직원 선택 행 */}
+                                    <tr>
+                                        <th className="form-label">매핑 직원</th>
+                                        <td>
+                                            <div style={{ display: 'flex', gap: '4px' }}>
+                                                <input className="form-input" style={{ flex: 1 }} value={user.empNm || ''} readOnly placeholder="직원을 선택하세요" />
+                                                <button className="um-btn edit" style={{ padding: '0 10px' }} onClick={() => setShowEmpSearch(true)}>
+                                                    <Search size={14} /> 조회
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th className="form-label">이메일</th>
@@ -213,6 +246,14 @@ const UserManagement = () => {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* ✨ [추가] 직원 조회 공통 팝업 호출: 'EmployeeSearchModal' 미사용 경고 해결 [cite: 2026-02-03] */}
+            {showEmpSearch && (
+                <EmployeeSearchModal 
+                    onClose={() => setShowEmpSearch(false)} 
+                    onSelect={handleSelectEmployee} 
+                />
             )}
         </div>
     );

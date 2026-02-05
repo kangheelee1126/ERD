@@ -29,6 +29,13 @@ namespace ErdProject.Server.Models
         public string UseYn { get; set; } = "Y";
 
         [Column("REG_DT")] // ✨ DB 스키마: [REG_DT]
-        public DateTime RegDt { get; set; } = DateTime.Now;
+        public DateTime? RegDt { get; set; } = DateTime.Now;
+
+        /* ✨ [추가] 직원 매핑 ID (FK -> SYS_EMPLOYEE_MST.EMP_ID) */
+        [Column("EMP_ID")]
+        public int? EmpId { get; set; }
+
+        /* [cite: 2026-02-03] ERD SYSTEM 표준 감사(Audit) 필드 추가 */
+
     }
 }
