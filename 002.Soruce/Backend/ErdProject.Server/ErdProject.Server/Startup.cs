@@ -12,6 +12,8 @@ using Newtonsoft.Json.Serialization; // ✨ 카멜 케이스 설정을 위해 �
 using ErdProject.Server.IServices;
 using ErdProject.Server.IServices.Admin;
 using ErdProject.Server.Services.Admin;
+using ErdProject.Server.IServices.System;
+using ErdProject.Server.Services.System;
 
 namespace ErdProject.Server
 {
@@ -61,6 +63,8 @@ namespace ErdProject.Server
             // 이 코드가 있어야 EmployeeController에서 서비스를 주입받을 수 있습니다.
             services.AddScoped<IEmployeeService, EmployeeService>();
 
+            //파일 등록 서비스
+            services.AddScoped<IFileMasterService, FileMasterService>();
             // 4. CORS 설정
             services.AddCors(options =>
             {

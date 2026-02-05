@@ -17,6 +17,9 @@ import ContactManagement from './pages/business/ContactManagement';
 import BusinessSiteService from './pages/business/BusinessManage';
 // 직원정보
 import EmployeeManagement from './pages/Admin/EmployeeManagement';
+// 파일 업로드
+import FileTestPage from './pages/Sample/FileTestPage'; // ✨ 테스트 페이지 임포트
+
 function App() {
   return (
     <Routes>
@@ -62,7 +65,8 @@ function App() {
 
         <Route path="/business/manage" element={<BusinessSiteService />} />
 
-        
+        {/* 🚀 파일 업로드 테스트 경로 등록 */}
+        <Route path="/sample/upload-test" element={<FileTestPage />} />
 
       </Route>
 

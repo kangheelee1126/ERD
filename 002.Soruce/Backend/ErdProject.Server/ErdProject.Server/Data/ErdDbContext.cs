@@ -2,6 +2,7 @@
 using ErdProject.Server.Models;
 using ErdProject.Server.Models.Entities;
 using ErdProject.Server.Models.Entities.Admin;
+using ErdProject.Server.Models.Entities.System;
 
 namespace ErdProject.Server.Data
 {
@@ -51,6 +52,8 @@ namespace ErdProject.Server.Data
         /* ✨ 직원 마스터 테이블 정의 추가 [cite: 2026-02-03] */
         public DbSet<Employee> Employees { get; set; } = default!;
 
+        /* 파일 정보 마스터 DbSet 등록 */
+        public DbSet<FileMaster> FileMaster { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -1,0 +1,96 @@
+/* 파일 업로드 전용 스타일 (공통 레이아웃 변수 활용) [cite: 2026-01-30] */
+
+.file-uploader-wrapper {
+    width: 100%;
+}
+
+/* 1. 전체 건수 배지 (Badge) 강조 스타일 [cite: 2026-01-30] */
+.data-count-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 12px;
+    margin-left: 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background-color: var(--input-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.data-count-badge.has-data {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+.data-count-badge .count-num {
+    margin: 0 4px;
+    font-size: 0.9rem;
+}
+
+/* 2. 드래그 앤 드롭 존 [cite: 2026-01-30] */
+.drop-zone {
+    border: 2px dashed var(--border-color);
+    padding: 25px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.drop-zone.active {
+    border-color: var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+.drop-zone p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* 3. 업로드 진행 현황 [cite: 2026-01-30] */
+.upload-progress-area {
+    background-color: var(--bg-page);
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.progress-row {
+    margin-bottom: 10px;
+}
+
+.progress-row:last-child {
+    margin-bottom: 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 4px;
+    background-color: var(--input-bg);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: width 0.2s ease;
+}
