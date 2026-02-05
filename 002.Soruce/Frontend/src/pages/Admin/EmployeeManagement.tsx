@@ -1,41 +1,47 @@
-import React, { useState, useMemo, useEffect } from 'react'; // ✨ useEffect 추가
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
-    Search, UserPlus, Edit, Trash2, Users, 
-    ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight 
-} from 'lucide-react';
+    Search, UserPlus, Edit, Trash2, Users, List,
+    ChevronsLeft, ChevronsRight , ChevronLeft , ChevronRight } from 'lucide-react';
 import EmployeeModal from './EmployeeModal';
-import '../../style/common-layout.css';
+import { EmployeeService, type Employee } from '../../services/Admin/EmployeeService';
 
 const EmployeeManagement: React.FC = () => {
+    /* 1. 상태 관리 */
+    const [employees, setEmployees] = useState<Employee[]>([]);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalCount, setTotalCount] = useState(0); // ✨ 초기값 0으로 설정
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedEmp, setSelectedEmp] = useState<any>(null);
+    const [totalCount, setTotalCount] = useState(0);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    /* =========================================
-       ✨ 데이터 조회 로직 (setTotalCount 사용) [cite: 2026-01-30]
-       ========================================= */
-    const fetchEmployees = async () => {
-        // 실제 구현 시: const response = await EmployeeService.getEmployees({ page, size: pageSize });
-        // 현재는 가이드라인에 따라 임시 데이터 건수를 세팅하여 경고 해결 [cite: 2026-02-03]
-        const mockTotalCount = 125; 
-        setTotalCount(mockTotalCount); 
-        
-        console.log(`조회 실행: ${page}페이지, ${pageSize}개씩, 전체 ${mockTotalCount}건`);
-    };
+    const [modalConfig, setModalConfig] = useState<{ 
+        isOpen: boolean; 
+        data?: Employee 
+    }>({ isOpen: false });
 
-    /* ✨ 페이지 번호나 사이즈가 변경될 때마다 자동 조회 [cite: 2026-01-30] */
+    /* 2. 데이터 조회 로직 (검색어 포함) */
+    const loadEmployees = useCallback(async () => {
+        try {
+            // API 호출 시 검색어, 페이지, 사이즈 전달
+            const result = await EmployeeService.getEmployees(page, pageSize, searchTerm);
+            setEmployees(result.items || []);
+            setTotalCount(result.totalCount || 0);
+        } catch (error) {
+            console.error("직원 목록 조회 실패:", error);
+            setEmployees([]);
+        }
+    }, [page, pageSize, searchTerm]);
+
     useEffect(() => {
-        fetchEmployees();
-    }, [page, pageSize]);
+        loadEmployees();
+    }, [loadEmployees]);
 
-    /* =========================================
-       ✨ 페이징 그룹 계산 로직 [cite: 2026-02-03]
-       ========================================= */
+    /* 3. 페이징 그룹 계산 (최대 10개 표시 지침 준수) [cite: 2026-02-03] */
     const { totalPages, startPage, endPage, pageNumbers } = useMemo(() => {
         const total = Math.ceil(totalCount / pageSize) || 1;
+        
+        // 현재 페이지가 속한 그룹의 시작 페이지 (1~10 -> 1, 11~20 -> 11)
         const start = Math.floor((page - 1) / 10) * 10 + 1;
+        // 현재 그룹의 마지막 페이지 (최대 totalPages를 넘지 않음)
         const end = Math.min(start + 9, total);
         
         const nums = [];
@@ -43,52 +49,58 @@ const EmployeeManagement: React.FC = () => {
         
         return { totalPages: total, startPage: start, endPage: end, pageNumbers: nums };
     }, [totalCount, pageSize, page]);
+    /* 4. 이벤트 핸들러 */
 
-    /* 검색 시 1페이지 초기화 지침 준수 [cite: 2026-02-03] */
     const handleSearch = () => {
-        setPage(1);
-        fetchEmployees();
+        setPage(1); // 검색 시 1페이지로 초기화
+        loadEmployees();
     };
-    
-    const openModal = (emp: any = null) => {
-        setSelectedEmp(emp);
-        setIsModalOpen(true);
+
+    const handleDelete = async (id: number) => {
+        if (window.confirm('정말 삭제하시겠습니까?')) {
+            try {
+                await EmployeeService.deleteEmployee(id);
+                loadEmployees();
+            } catch (error) {
+                alert("삭제 중 오류가 발생했습니다.");
+            }
+        }
     };
 
     return (
         <div className="page-container">
             <div className="page-header">
                 <div className="header-title">
-                    <Users size={24} color="var(--primary-color)" />
-                    직원 마스터 관리
+                    <Users size={24} color="#3b82f6" /> 직원 마스터 관리
                 </div>
             </div>
 
+            {/* 검색 영역 */}
             <div className="filter-bar">
                 <div className="filter-item">
                     <label>검색어</label>
-                    <input type="text" className="filter-input" placeholder="사번 / 이름 / 부서" />
+                    <input 
+                        type="text" 
+                        className="filter-input" 
+                        placeholder="사번 / 이름 / 부서명" 
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    />
                 </div>
-                <div className="filter-item">
-                    <label>재직여부</label>
-                    <select className="page-select">
-                        <option value="Y">재직</option>
-                        <option value="N">퇴사</option>
-                    </select>
-                </div>
-                <button className="btn-search" onClick={handleSearch}>
-                    <Search size={14} /> 조회
+                <button className="btn-search" onClick={handleSearch} style={{ height: '40px', padding: '0 20px' }}>
+                    <Search size={16} /> 조회
                 </button>
             </div>
 
             <div className="content-body section">
                 <div className="part-header">
                     <div className="header-left">
+                        <List size={16} />
                         <span className="part-title">직원 목록</span>
-                        {/* ✨ totalCount가 실시간으로 반영됨 [cite: 2026-01-30] */}
                         <span className="text-secondary">(전체: <b className="highlight-text">{totalCount}</b>건)</span>
                     </div>
-                    <div className="header-right">
+                    <div className="header-right" style={{ display: 'flex', gap: '8px' }}>
                         <select 
                             className="page-select" 
                             value={pageSize} 
@@ -98,7 +110,7 @@ const EmployeeManagement: React.FC = () => {
                             <option value={50}>50개씩</option>
                             <option value={100}>100개씩</option>
                         </select>
-                        <button className="btn-primary" onClick={() => openModal()}>
+                        <button className="btn-primary" onClick={() => setModalConfig({ isOpen: true })}>
                             <UserPlus size={14} /> 신규 등록
                         </button>
                     </div>
@@ -107,34 +119,53 @@ const EmployeeManagement: React.FC = () => {
                 <div className="part-body">
                     <table className="standard-table">
                         <colgroup>
-                            <col width="60px" /><col width="120px" /><col width="120px" />
-                            <col width="*" /><col width="150px" /><col width="100px" />
-                            <col width="100px" /><col width="160px" />
+                                <col width="50px" /> {/* No */}
+                                <col width="100px" /> {/* 사번 */}
+                                <col width="100px" /> {/* 성명 */}
+                                <col width="120px" /> {/* 부서명 */}
+                                <col width="150px" /> {/* 전화번호 */}
+                                <col width="*" /> {/* 이메일 */}
+                                <col width="100px" /> {/* 입사일 */}
+                                <col width="100px" /> {/* 퇴사일 */}
+                                <col width="80px" /> {/* 재직 */}
+                                <col width="160px" /> {/* 관리 */}
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>No</th><th>사번</th><th>성명</th>
-                                <th>이메일</th><th>부서</th><th>직급</th>
-                                <th>재직</th><th>관리</th>
+                                <th style={{ width: '50px' }}>No</th>
+                                <th style={{ width: '100px' }}>사번</th>
+                                <th style={{ width: '100px' }}>성명</th>
+                                <th style={{ width: '120px' }}>부서명</th>
+                                <th style={{ width: '130px' }}>전화번호</th>
+                                <th>이메일</th>
+                                <th style={{ width: '100px' }}>입사일</th>
+                                <th style={{ width: '100px' }}>퇴사일</th>
+                                <th style={{ width: '80px' }}>재직</th>
+                                <th style={{ width: '260px' }}>관리</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {/* 실제 데이터 매핑 시: employees.map(...) */}
-                            {[1, 2, 3].map((idx) => (
-                                <tr key={idx} onDoubleClick={() => openModal({id: idx, empNo: `EMP${idx}`})}>
-                                    <td className="center">{idx}</td>
-                                    <td className="center">EMP202600{idx}</td>
-                                    <td className="center">홍길동{idx}</td>
-                                    <td>test{idx}@erdsystem.com</td>
-                                    <td className="center">개발팀</td>
-                                    <td className="center">책임</td>
-                                    <td className="center"><span className="status-blue">재직</span></td>
+                            {employees.map((emp, idx) => (
+                                <tr key={emp.empId || idx}>
+                                    <td className="center">{(page - 1) * pageSize + idx + 1}</td>
+                                    <td className="center highlight-text">{emp.empNo}</td>
+                                    <td className="center">{emp.empNm}</td>
+                                    <td className="center">{emp.deptNm}</td> {/* 코드 대신 명칭 표시 */}
+                                    <td className="center">{emp.phone}</td>
+                                    <td>{emp.email}</td>
+                                    <td className="center">{emp.hireDt}</td>
+                                    <td className="center">{emp.hireDt || '-'}</td>
                                     <td className="center">
-                                        <div className="btn-action-group flex-center">
-                                            <button className="cm-btn edit" onClick={() => openModal({id: idx})}>
+                                        <span className={emp.activeYn === 'Y' ? 'status-blue' : 'status-red'}>
+                                            {emp.activeYn === 'Y' ? '재직' : '퇴사'}
+                                        </span>
+                                    </td>
+                                    <td className="center">
+                                        <div className="btn-action-group" style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
+                                            <button className="cm-btn edit" onClick={() => setModalConfig({ isOpen: true, data: emp })}>
                                                 <Edit size={14} /> 수정
                                             </button>
-                                            <button className="cm-btn delete">
+                                            <button className="cm-btn delete" onClick={() => emp.empId && handleDelete(emp.empId)}>
                                                 <Trash2 size={14} /> 삭제
                                             </button>
                                         </div>
@@ -143,36 +174,59 @@ const EmployeeManagement: React.FC = () => {
                             ))}
                         </tbody>
                     </table>
-                </div>
 
-                <div className="pagination-container">
-                    <button className="paging-btn" disabled={page === 1} onClick={() => setPage(1)}>
-                        <ChevronsLeft />
-                    </button>
-                    <button className="paging-btn" disabled={startPage === 1} onClick={() => setPage(startPage - 1)}>
-                        <ChevronLeft />
-                    </button>
-
-                    {pageNumbers.map(num => (
-                        <button 
-                            key={num} 
-                            className={`paging-btn ${page === num ? 'active' : ''}`}
-                            onClick={() => setPage(num)}
-                        >
-                            {num}
+                   {/* [cite: 2026-01-30] 페이지네이션 컨트롤 (하단 중앙 배치) */}
+                    <div className="pagination-container">
+                        {/* 처음으로 이동 */}
+                        <button className="paging-btn" disabled={page === 1} onClick={() => setPage(1)}>
+                            <ChevronsLeft size={16} />
                         </button>
-                    ))}
+                        
+                        {/* 이전 10개 그룹으로 이동 [cite: 2026-02-03] */}
+                        <button 
+                            className="paging-btn" 
+                            disabled={startPage === 1} 
+                            onClick={() => setPage(startPage - 1)}
+                        >
+                            <ChevronLeft size={16} />
+                        </button>
 
-                    <button className="paging-btn" disabled={endPage === totalPages} onClick={() => setPage(endPage + 1)}>
-                        <ChevronRight />
-                    </button>
-                    <button className="paging-btn" disabled={page === totalPages} onClick={() => setPage(totalPages)}>
-                        <ChevronsRight />
-                    </button>
+                        {/* 페이지 번호 (최대 10개) */}
+                        {pageNumbers.map(num => (
+                            <button 
+                                key={num} 
+                                className={`paging-btn ${page === num ? 'active' : ''}`}
+                                onClick={() => setPage(num)}
+                            >
+                                {num}
+                            </button>
+                        ))}
+
+                        {/* 다음 10개 그룹으로 이동 */}
+                        <button 
+                            className="paging-btn" 
+                            disabled={endPage === totalPages} 
+                            onClick={() => setPage(endPage + 1)}
+                        >
+                            <ChevronRight size={16} />
+                        </button>
+                        
+                        {/* 마지막으로 이동 */}
+                        <button className="paging-btn" disabled={page === totalPages} onClick={() => setPage(totalPages)}>
+                            <ChevronsRight size={16} />
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {isModalOpen && <EmployeeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={selectedEmp} />}
+            {modalConfig.isOpen && (
+                <EmployeeModal 
+                    isOpen={modalConfig.isOpen} 
+                    onClose={() => setModalConfig({ isOpen: false })} 
+                    onSuccess={loadEmployees} 
+                    data={modalConfig.data} 
+                />
+            )}
         </div>
     );
 };

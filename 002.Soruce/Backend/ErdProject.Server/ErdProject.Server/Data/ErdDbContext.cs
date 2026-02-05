@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ErdProject.Server.Models;
 using ErdProject.Server.Models.Entities;
+using ErdProject.Server.Models.Entities.Admin;
 
 namespace ErdProject.Server.Data
 {
@@ -46,6 +47,9 @@ namespace ErdProject.Server.Data
 
         //담당자별 사업장매핑
         public DbSet<CustContactSiteMap> CustContactSiteMaps { get; set; } = null!;
+
+        /* ✨ 직원 마스터 테이블 정의 추가 [cite: 2026-02-03] */
+        public DbSet<Employee> Employees { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
