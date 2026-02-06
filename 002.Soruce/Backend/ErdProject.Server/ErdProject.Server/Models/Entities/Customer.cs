@@ -60,6 +60,9 @@ namespace ErdProject.Server.Models.Entities
         [Column("sort_no")]
         public int SortNo { get; set; }
 
+        [Column("sales_emp_id")]
+        public int? SalesEmpId { get; set; }
+
         [Column("use_yn")]
         public string UseYn { get; set; } = "Y";
 

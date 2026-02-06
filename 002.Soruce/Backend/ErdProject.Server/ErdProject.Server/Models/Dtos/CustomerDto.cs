@@ -42,6 +42,10 @@ namespace ErdProject.Server.Models.Dtos
 
         public int SortNo { get; set; }
 
+        public int? SalesEmpId { get; set; }
+
+        public string? SalesEmpNm { get; set; }
+
         public string? UseYn { get; set; }
 
         // ✨ [중요] 프론트엔드가 'regDt', 'modDt'로 보내므로 

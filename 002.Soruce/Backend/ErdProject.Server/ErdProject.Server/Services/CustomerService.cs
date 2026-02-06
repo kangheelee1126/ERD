@@ -98,6 +98,7 @@ namespace ErdProject.Server.Services
                     entity.TimezoneCd = dto.TimezoneCd;
                     entity.Comments = dto.Comments;
                     entity.SortNo = dto.SortNo;
+                    entity.SalesEmpId = dto.SalesEmpId;
                     entity.UseYn = dto.UseYn ?? "Y";
                     entity.UpdatedDt = DateTime.Now;
                     entity.UpdatedBy = dto.UpdatedBy;
@@ -121,6 +122,17 @@ namespace ErdProject.Server.Services
             var c = await _context.Customers.FindAsync(id);
             if (c == null) return null;
 
+            // ✨ [추가] 담당 영업 ID가 있다면, 사용자 테이블에서 이름을 조회합니다.
+            string? salesEmpNm = null;
+            if (c.SalesEmpId.HasValue && c.SalesEmpId.Value > 0)
+            {
+                // _context.Users는 실제 사용자/직원 테이블명에 맞춰 수정하세요 (예: _context.Employees)
+                salesEmpNm = await _context.Employees
+                    .Where(u => u.EmpId == c.SalesEmpId)
+                    .Select(u => u.EmpNm)
+                    .FirstOrDefaultAsync();
+            }
+
             // Entity -> DTO 변환
             return new CustomerDto
             {
@@ -141,10 +153,15 @@ namespace ErdProject.Server.Services
                 TimezoneCd = c.TimezoneCd,
                 Comments = c.Comments,
                 SortNo = c.SortNo,
+
+                // ✨ [수정] ID와 조회한 이름을 같이 매핑
+                SalesEmpId = c.SalesEmpId,
+                SalesEmpNm = salesEmpNm,  // <-- 화면에 표시될 이름
+
                 UseYn = c.UseYn,
-                RegDt = c.CreatedDt,
+                RegDt = c.CreatedDt,       // DTO 타입이 string이면 .ToString("yyyy-MM-dd") 필요할 수 있음
                 CreatedBy = c.CreatedBy,
-                ModDt = c.UpdatedDt,
+                ModDt = c.UpdatedDt,       // DTO 타입이 string이면 .ToString("yyyy-MM-dd") 필요할 수 있음
                 UpdatedBy = c.UpdatedBy
             };
         }
