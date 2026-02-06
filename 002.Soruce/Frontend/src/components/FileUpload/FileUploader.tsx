@@ -145,41 +145,45 @@ const FileUploader = ({ refType, refId, onRefresh }: FileUploaderProps) => {
           ))}
         </div>
       )}
-
-      <table className="standard-table">
-        <colgroup>
-          <col width="60px" /><col width="*" /><col width="100px" /><col width="160px" /><col width="180px" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>No</th><th>파일명</th><th>크기</th><th>등록일</th><th>관리</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(fileList.length === 0 && uploadingFiles.length === 0) ? (
-            <tr><td colSpan={5} className="text-center" style={{padding: '40px', color: 'var(--text-secondary)'}}>첨부된 파일이 없습니다.</td></tr>
-          ) : (
-            fileList.map((f, idx) => (
-              <tr key={f.fileId || idx}>
-                <td className="text-center">{idx + 1}</td>
-                <td className="left">{f.originNm}</td>
-                <td className="right">{(f.fileSize / 1024).toFixed(1)} KB</td>
-                <td className="text-center">{f.crtDt}</td>
-                <td className="text-center">
-                  <div className="btn-group-center">
-                    <button className="cm-btn edit" onClick={() => handleDownload(f.fileId, f.originNm)}>
-                      <Download size={14} /> 다운로드
-                    </button>&nbsp;
-                    <button className="cm-btn delete" onClick={() => handleDelete(f.fileId)}>
-                      <Trash2 size={14} /> 삭제
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      <div className="file-list-body">
+      {/* 🚀 테이블 전용 스크롤 컨테이너 추가 */}
+          <div className="table-scroll-container">
+                <table className="standard-table">
+                  <colgroup>
+                    <col width="50px" /><col width="*" /><col width="100px" /><col width="160px" /><col width="180px" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>No</th><th>파일명</th><th>크기</th><th>등록일</th><th>관리</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(fileList.length === 0 && uploadingFiles.length === 0) ? (
+                      <tr><td colSpan={5} className="text-center" style={{padding: '40px', color: 'var(--text-secondary)'}}>첨부된 파일이 없습니다.</td></tr>
+                    ) : (
+                      fileList.map((f, idx) => (
+                        <tr key={f.fileId || idx}>
+                          <td className="text-center">{idx + 1}</td>
+                          <td className="left">{f.originNm}</td>
+                          <td className="right">{(f.fileSize / 1024).toFixed(1)} KB</td>
+                          <td className="text-center">{f.crtDt}</td>
+                          <td className="text-center">
+                            <div className="btn-group-center">
+                              <button className="cm-btn edit" onClick={() => handleDownload(f.fileId, f.originNm)}>
+                                <Download size={14} /> 다운로드
+                              </button>&nbsp;
+                              <button className="cm-btn delete" onClick={() => handleDelete(f.fileId)}>
+                                <Trash2 size={14} /> 삭제
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+            </div>
+        </div>
     </div>
   );
 };
