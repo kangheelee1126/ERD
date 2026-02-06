@@ -4,114 +4,252 @@
 
 /* ERD 페이지 컨테이너 */
 .erd-page-container {
-    display: flex;
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* 1. ERD 전용 툴바 (수직) */
-  .erd-toolbar-vertical {
-    width: 60px;
-    background-color: #25262b;
-    border-right: 1px solid #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 10px;
-    gap: 10px;
-    z-index: 10;
-  }
-  
-  .tool-btn {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    color: #cbd5e1;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .tool-btn:hover { background-color: #475569; color: #fff; }
-  .tool-btn.active { background-color: rgba(59, 130, 246, 0.2); border-color: #3b82f6; color: #60a5fa; }
-  
-  /* 2. 캔버스 영역 */
-  .canvas-wrapper {
-    flex: 1;
-    position: relative;
-    background-color: #0f172a;
-    overflow: hidden;
-  }
-  
-  /* 3. 우측 속성 패널 */
-  .properties-panel {
-    width: 320px; /* 너비 약간 조정 */
-    background-color: #1e293b;
-    border-left: 1px solid #334155;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .panel-header { padding: 15px; font-weight: bold; border-bottom: 1px solid #334155; background-color: #1a2436; color: #e2e8f0; }
-  .panel-content { padding: 15px; color: #94a3b8; flex: 1; overflow-y: auto; }
-  .property-group { display: flex; flex-direction: column; gap: 10px; }
-  .prop-label { font-size: 0.8rem; color: #94a3b8; font-weight: 600; margin-bottom: 4px; }
-  .prop-divider { height: 1px; background: #334155; margin: 15px 0; }
-  
-  /* --- 입력창 스타일 (공통) --- */
-  .ui-input {
-    background-color: #0f172a !important;
-    border: 1px solid #475569;
-    color: white !important;
-    padding: 0 8px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    outline: none;
-    width: 100%;
-    height: 32px;
-    line-height: 30px;
-  }
-  .ui-input:focus { border-color: #3b82f6; }
-  .ui-input.full-width { width: 100%; }
-  
-  /* --- 컬럼 리스트 아이템 --- */
-  .column-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #334155;
-    padding: 6px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-  }
-  
-  .column-item input[type="checkbox"] { width: 16px; height: 16px; margin: 0; cursor: pointer; flex-shrink: 0; }
-  
-  /* 컬럼 입력창들 */
-  .column-item .ui-input { flex: 1; width: 0; min-width: 0; font-size: 0.8rem; } /* 이름 */
-  .column-item .ui-input:nth-of-type(3) { flex: 0 0 80px; text-align: center; } /* 타입 (너비 고정) */
-  
-  /* 이동 버튼들 */
-  .col-move-btns { display: flex; flex-direction: column; gap: 2px; margin-right: 2px; }
-  .move-btn { background: transparent; border: none; color: #94a3b8; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 12px; }
-  .move-btn:hover { color: #fff; }
-  .move-btn:disabled { opacity: 0.3; cursor: default; }
-  
-  /* 삭제 버튼 */
-  .delete-btn { width: 100%; background-color: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 10px; }
-  .delete-btn:hover { background-color: #ef4444; color: white; }
-  
-  /* 뷰 모드 셀렉터 (캔버스 우상단) */
-  .view-mode-control { position: absolute; top: 10px; right: 10px; z-index: 5; background: #25262b; padding: 5px; border-radius: 4px; border: 1px solid #444; display: flex; gap: 10px; align-items: center; }
-  .view-select { background-color: #0f172a; color: #e2e8f0; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; outline: none; }
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
 
-  /* =========================================
-   ✨ 상단 파일 메뉴바 (New)
-   ========================================= */
+/* 1. ERD 전용 툴바 (수직) */
+.erd-toolbar-vertical {
+  width: 60px;
+  background-color: #25262b;
+  border-right: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* 🔥 [수정] 툴바 버튼 스타일
+ - flex-shrink: 0 추가 (화면이 작아져도 버튼 형태 유지)
+*/
+.tool-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0; /* ✨ 버튼 찌그러짐 방지 */
+}
+
+/* 🔥 [수정] 아이콘 크기 강제 고정 (우선순위 최상위 적용)
+ - .erd-toolbar-vertical 부모 클래스 명시
+ - min-width/min-height로 축소 방지
+*/
+.erd-toolbar-vertical .tool-btn svg {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important; /* 공간 부족 시에도 크기 사수 */
+  min-height: 24px !important;
+  stroke-width: 2px !important; /* 선 두께 유지 */
+  display: block;
+}
+
+.tool-btn:hover {
+  background-color: #475569;
+  color: #fff;
+}
+
+.tool-btn.active {
+  background-color: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+
+/* 활성 상태일 때 아이콘 색상 강제 적용 */
+.erd-toolbar-vertical .tool-btn.active svg {
+  stroke: #60a5fa !important;
+}
+
+/* 2. 캔버스 영역 */
+.canvas-wrapper {
+  flex: 1;
+  position: relative;
+  background-color: #0f172a;
+  overflow: hidden;
+}
+
+/* 3. 우측 속성 패널 */
+.properties-panel {
+  width: 320px; /* 너비 약간 조정 */
+  background-color: #1e293b;
+  border-left: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  padding: 15px;
+  font-weight: bold;
+  border-bottom: 1px solid #334155;
+  background-color: #1a2436;
+  color: #e2e8f0;
+}
+
+.panel-content {
+  padding: 15px;
+  color: #94a3b8;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.property-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prop-label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.prop-divider {
+  height: 1px;
+  background: #334155;
+  margin: 15px 0;
+}
+
+/* --- 입력창 스타일 (공통) --- */
+.ui-input {
+  background-color: #0f172a !important;
+  border: 1px solid #475569;
+  color: white !important;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  outline: none;
+  width: 100%;
+  height: 32px;
+  line-height: 30px;
+}
+
+.ui-input:focus {
+  border-color: #3b82f6;
+}
+
+.ui-input.full-width {
+  width: 100%;
+}
+
+/* --- 컬럼 리스트 아이템 --- */
+.column-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #334155;
+  padding: 6px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.column-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 컬럼 입력창들 */
+.column-item .ui-input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  font-size: 0.8rem;
+} /* 이름 */
+
+.column-item .ui-input:nth-of-type(3) {
+  flex: 0 0 80px;
+  text-align: center;
+} /* 타입 (너비 고정) */
+
+/* 이동 버튼들 */
+.col-move-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: 2px;
+}
+
+.move-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 12px;
+}
+
+.move-btn:hover {
+  color: #fff;
+}
+
+.move-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+  width: 100%;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.delete-btn:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* 뷰 모드 셀렉터 (캔버스 우상단) */
+.view-mode-control {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  background: #25262b;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.view-select {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+}
+
+/* =========================================
+ ✨ 상단 파일 메뉴바 (New)
+ ========================================= */
 .erd-top-menu {
   height: 45px;
   background-color: #25262b; /* 툴바와 같은 어두운 색 */
