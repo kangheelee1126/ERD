@@ -21,30 +21,22 @@
 .layout-1 { grid-template-columns: 1fr; }
 .layout-2 { grid-template-columns: 1fr 1fr; }
 
-/* ✨ 수정: 3분할 - 우측 메인 1개, 좌측 서브 2개 (상하) [cite: 2026-01-28] */
 .layout-3-main-right {
-  grid-template-columns: 1fr 2.5fr; /* 좌측 서브 1 : 우측 메인 2.5 비율 */
+  grid-template-columns: 1fr 2.5fr; 
   grid-template-rows: 1fr 1fr;
   grid-template-areas: 
     "sub1 main"
     "sub2 main";
 }
 
-/* ✨ 추가: 3분할 - 좌측 메인 1개, 우측 서브 2개 (상하) [cite: 2026-01-28] */
 .layout-3-main-left {
-  grid-template-columns: 2.5fr 1fr; /* 좌측 메인 2.5 : 우측 서브 1 비율 */
+  grid-template-columns: 2.5fr 1fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas: 
     "main sub1"
     "main sub2";
 }
 
-.layout-4 { 
-  grid-template-columns: 1fr 1fr; 
-  grid-template-rows: 1fr 1fr; 
-}
-
-/* 그리드 영역 이름 지정 [cite: 2026-01-28] */
 .area-main { grid-area: main; }
 .area-sub1 { grid-area: sub1; }
 .area-sub2 { grid-area: sub2; }
@@ -54,25 +46,31 @@
   width: 100%;
   border-collapse: collapse;
   border: var(--border-style);
+  table-layout: fixed; /* 고정 레이아웃 권장 */
 }
 
 .standard-table th {
   background-color: rgba(255, 255, 255, 0.05);
-  border: var(--border-style); /* ✨ 실선 구분 */
-  padding: 12px;
+  border: var(--border-style);
+  padding: 10px;
   font-size: 0.85rem;
-  text-align: center;         /* ✨ 헤더 중앙 정렬 */
+  text-align: center;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .standard-table td {
-  border: var(--border-style); /* ✨ 실선 구분 */
-  padding: 10px;
+  border: var(--border-style);
+  padding: 8px 10px;
   font-size: 0.85rem;
   color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .standard-table td.center { text-align: center; }
+.standard-table td.right { text-align: right; }
 
 /* --- 4. 표준 폼 및 입력 요소 (다크 테마) [cite: 2026-01-27, 2026-01-28] --- */
 .form-table {
@@ -95,7 +93,9 @@
   padding: 8px 12px;
 }
 
-input[type="text"], input[type="password"], select, textarea {
+/* 모든 입력 필드 공통 스타일 */
+input[type="text"], input[type="password"], input[type="number"], input[type="date"], 
+select, textarea {
   width: 100%;
   padding: 8px 12px;
   background-color: var(--bg-input); 
@@ -106,8 +106,16 @@ input[type="text"], input[type="password"], select, textarea {
   outline: none;
 }
 
-input:focus, select:focus {
+input:focus, select:focus, textarea:focus {
   border-color: var(--primary-color);
+}
+
+input[readonly], input:disabled {
+  background-color: #1e293b; /* 읽기 전용 배경색 */
+  cursor: not-allowed;
+}
+input[readonly].cursor-pointer {
+  cursor: pointer; /* 팝업 트리거용 */
 }
 
 /* --- 5. 구획(Section) 디자인 --- */
@@ -132,4 +140,77 @@ input:focus, select:focus {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
+}
+
+/* --- 6. 공통 버튼 스타일 (추가됨) --- */
+.cm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+/* Primary: 저장, 등록, 조회 (파란색) */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+}
+.btn-primary:hover {
+  filter: brightness(110%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Secondary: 닫기, 취소, 검색아이콘 버튼 (투명/어두운 배경) */
+.btn-secondary {
+  background-color: var(--bg-header);
+  border: var(--border-style);
+  color: var(--text-main);
+}
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Delete: 삭제 (빨간색) */
+.cm-btn.delete {
+  background-color: transparent;
+  border: 1px solid var(--danger-color);
+  color: var(--danger-color);
+}
+.cm-btn.delete:hover {
+  background-color: var(--danger-color);
+  color: #ffffff;
+}
+
+/* Edit: 수정 (테두리) */
+.cm-btn.edit {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+.cm-btn.edit:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* Large Size: 신규등록 등 강조 버튼용 */
+.btn-lg {
+  height: 36px !important;
+  padding: 0 20px !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+}
+
+/* 유틸리티: 우측 정렬 */
+.ml-auto {
+  margin-left: auto;
 }

@@ -20,6 +20,10 @@ import EmployeeManagement from './pages/Admin/EmployeeManagement';
 // 파일 업로드
 import FileTestPage from './pages/Sample/FileTestPage'; // ✨ 테스트 페이지 임포트
 
+// [추가] 유지관리 계약 관리 페이지 Import
+import MaintContractMgt from './pages/business/MaintContractMgt';
+
+
 function App() {
   return (
     <Routes>
@@ -67,6 +71,10 @@ function App() {
 
         {/* 🚀 파일 업로드 테스트 경로 등록 */}
         <Route path="/sample/upload-test" element={<FileTestPage />} />
+
+        {/* [추가] 유지관리 계약 관리 라우트 정의 */}
+        {/* 예: http://localhost:3000/business/contract 로 접속 시 표시 */}
+        <Route path="/business/contract" element={<MaintContractMgt />} />
 
       </Route>
 
